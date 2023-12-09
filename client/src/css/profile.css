@@ -1,0 +1,87 @@
+.profile-page {
+  padding: 40px;
+  color: #ffffff;
+  background-color: #22204f;
+}
+
+.profile-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start; /* Align items to the top */
+  justify-content: flex-start; /* Align content to the top */
+  border: 1px solid #ccc;
+  background-color: #14132f;
+  padding: 30px;
+  margin-bottom: 40px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profile-image img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  margin-right: 40px;
+  object-fit: cover;
+}
+
+.profile-details {
+  flex: 1;
+}
+
+.profile-details h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.profile-details h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.profile-details input[type="text"],
+.profile-details input[type="number"] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.profile-details textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: none; /* Disable manual resizing */
+  overflow: hidden; /* Hide the vertical scrollbar */
+  min-height: 50px; /* Set a minimum height */
+  white-space: pre-wrap;
+  transition: height 0.3s; /* Add a smooth transition effect */
+}
+
+
+.profile-details button {
+  margin-right: 10px;
+  margin-left: 20px;
+  padding: 8px 16px;
+  font-size: 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transform: skewX(-10deg);
+  background-color: #d9454e;
+  text-shadow: 1px 1px #333;
+
+}
+
+.profile-details span {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.profile-details p {
+  font-size: 16px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}

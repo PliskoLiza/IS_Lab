@@ -1,0 +1,12 @@
+.footer {
+  padding: 10px;
+  text-align: center;
+  color: #fff;
+}
+
+.footer img {
+  width: 80px;
+  height: 80px;
+  object-fit: fill;
+  border-radius: 20%;
+}
