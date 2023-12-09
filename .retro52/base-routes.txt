@@ -1,0 +1,8 @@
+/api/roles
+/api/entity
+/api/regiment
+/api/permissions
+/api/user_to_regiment
+/api/role_to_permissions
+/api/ent_per_regiment_cur
+/api/ent_per_regiment_req

@@ -36,7 +36,7 @@ export default function LoginPage() {
         const registrationData = { email, password };
 
         try {
-            const response = await fetch("/api/register", {
+            const response = await fetch("/api/users/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
