@@ -47,7 +47,7 @@ module.exports = (pool) => {
         const { email, password, role_id } = req.body;
 
         pool.query(
-            'INSERT INTO users (email, password, role_id) VALUES ($1, $2, $3, $4) RETURNING user_id',
+            'INSERT INTO users (email, password, role_id) VALUES ($1, $2, $3) RETURNING user_id',
             [email, password, role_id],
             (error, result) => {
                 if (error) {
