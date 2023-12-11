@@ -11,11 +11,11 @@ export const AuthProvider = ({ children }) => {
     console.log("Checking for cached data:");
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      console.log("Chached user found");
+      console.log("Cached user found");
       setUser(JSON.parse(storedUser));
     }
     else {
-      console.log("Chached user not found");
+      console.log("Cached user not found");
     }
     setLoading(false);
   }, []);
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
 
     // Remove user from localStorage
-    console.log("Chached user removed");
+    console.log("Cached user removed");
     localStorage.removeItem("user");
   };
 

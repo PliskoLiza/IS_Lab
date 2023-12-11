@@ -21,7 +21,7 @@ export default function Header() {
           <li><Link to="/profile">Profile</Link></li>
           {user && <li onClick={handleLogout}>Logout</li>}
           {!user && <li><Link to="/login">Login</Link></li>}
-          {!user && <li><Link to="/register">Register</Link></li>}
+          {!user && <li><Link to="/register">Registration</Link></li>}
         </ul>
       </nav>
     </div>

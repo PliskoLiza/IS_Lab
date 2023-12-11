@@ -9,7 +9,7 @@ export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, seterrorMessage] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
@@ -19,9 +19,6 @@ export default function LoginPage() {
         setPassword(e.target.value);
     };
 
-    const handleConfirmPasswordChange = (e) => {
-        setConfirmPassword(e.target.value);
-    };
 
     const handleRegistration = async (e) => {
         e.preventDefault();
@@ -65,7 +62,7 @@ export default function LoginPage() {
                 <h3>Login</h3>
                 <input
                     type="email"
-                    placeholder="Login"
+                    placeholder="email"
                     value={email}
                     onChange={handleEmailChange}
                     required

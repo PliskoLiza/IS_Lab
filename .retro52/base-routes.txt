@@ -2,6 +2,7 @@
 /api/entity
 /api/regiment
 /api/permissions
+/api/profile
 /api/user_to_regiment
 /api/role_to_permissions
 /api/ent_per_regiment_cur

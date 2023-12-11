@@ -2,6 +2,7 @@ BEGIN;
 
 -- Populate roles
 INSERT INTO roles (description) VALUES
+('Not indicated'),
 ('Commander'),
 ('Soldier'),
 ('Engineer'),

@@ -44,11 +44,11 @@ module.exports = (pool) => {
 
     // Register
     router.post("/register", (req, res) => {
-        const { email, password, role_id } = req.body;
+        const { email, password} = req.body;
 
         pool.query(
             'INSERT INTO users (email, password, role_id) VALUES ($1, $2, $3) RETURNING user_id',
-            [email, password, role_id],
+            [email, password, 1],
             (error, result) => {
                 if (error) {
                     console.error('Error registering user:', error);
