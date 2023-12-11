@@ -60,5 +60,41 @@ module.exports = (pool) => {
         );
     });
 
+    router.delete('/delete', (req, res) => {
+        const { userId } = req.body;
+    
+        pool.connect((err, client, done) => {
+            if (err) {
+                return res.status(500).json({ error: 'Internal server error' });
+            }
+    
+            client.query('BEGIN', async (err) => {
+                if (err) {
+                    done();
+                    return res.status(500).json({ error: 'Internal server error' });
+                }
+    
+                try {
+                    // Update or delete related records
+                    await client.query('UPDATE regiment SET commander_user_id = NULL WHERE commander_user_id = $1', [userId]);
+                    await client.query('DELETE FROM user_to_regiment WHERE user_id = $1', [userId]);
+    
+                    // Delete the user
+                    await client.query('DELETE FROM users WHERE user_id = $1', [userId]);
+    
+                    // Commit the transaction
+                    await client.query('COMMIT');
+                    res.json({ message: 'User deleted successfully' });
+                } catch (error) {
+                    // Rollback in case of error
+                    await client.query('ROLLBACK');
+                    res.status(500).json({ error: 'Internal server error' });
+                } finally {
+                    done();
+                }
+            });
+        });
+    });
+
     return router;
 };

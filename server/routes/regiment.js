@@ -26,7 +26,7 @@ module.exports = (pool) => {
     router.post('/create', (req, res) => {
         const { user_id, count, description } = req.body;
         pool.query(
-            'INSERT INTO regiment (user_id, count, description) VALUES ($1, $2, $3) RETURNING reg_id',
+            'INSERT INTO regiment (commander_user_id, count, description) VALUES ($1, $2, $3) RETURNING reg_id',
             [user_id, count, description],
             (error, result) => {
                 if (error) {
@@ -38,5 +38,42 @@ module.exports = (pool) => {
         );
     });
 
+    router.delete('/delete', (req, res) => {
+        const { regId } = req.body;
+    
+        pool.connect((err, client, done) => {
+            if (err) {
+                return res.status(500).json({ error: 'Internal server error' });
+            }
+    
+            client.query('BEGIN', async (err) => {
+                if (err) {
+                    done();
+                    return res.status(500).json({ error: 'Internal server error' });
+                }
+    
+                try {
+                    // Update or delete related records
+                    await client.query('DELETE FROM user_to_regiment WHERE reg_id = $1', [regId]);
+                    await client.query('DELETE FROM ent_per_regiment_cur WHERE reg_id = $1', [regId]);
+                    await client.query('DELETE FROM ent_per_regiment_req WHERE reg_id = $1', [regId]);
+    
+                    // Delete the regiment
+                    await client.query('DELETE FROM regiment WHERE reg_id = $1', [regId]);
+    
+                    // Commit the transaction
+                    await client.query('COMMIT');
+                    res.json({ message: 'Regiment deleted successfully' });
+                } catch (error) {
+                    // Rollback in case of error
+                    await client.query('ROLLBACK');
+                    res.status(500).json({ error: 'Internal server error' });
+                } finally {
+                    done();
+                }
+            });
+        });
+    });
+    
     return router;
 };

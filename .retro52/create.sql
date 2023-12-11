@@ -1,7 +1,6 @@
 -- Create tables without foreign key constraints
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
-    reg_id INT,
     role_id INT,
     email VARCHAR(255),
     password VARCHAR(255)
@@ -25,7 +24,7 @@ CREATE TABLE role_to_permissions (
 
 CREATE TABLE regiment (
     reg_id SERIAL PRIMARY KEY,
-    user_id INT,
+    commander_user_id INT,
     count INT,
     description TEXT
 );
@@ -55,7 +54,6 @@ CREATE TABLE ent_per_regiment_req (
 
 -- Add foreign key constraints
 ALTER TABLE users
-    ADD FOREIGN KEY (reg_id) REFERENCES regiment(reg_id),
     ADD FOREIGN KEY (role_id) REFERENCES roles(role_id);
 
 ALTER TABLE role_to_permissions
@@ -63,7 +61,7 @@ ALTER TABLE role_to_permissions
     ADD FOREIGN KEY (perm_id) REFERENCES permissions(perm_id);
 
 ALTER TABLE regiment
-    ADD FOREIGN KEY (user_id) REFERENCES users(user_id);
+    ADD FOREIGN KEY (commander_user_id) REFERENCES users(user_id);
 
 ALTER TABLE user_to_regiment
     ADD FOREIGN KEY (reg_id) REFERENCES regiment(reg_id),
