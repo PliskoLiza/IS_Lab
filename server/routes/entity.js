@@ -70,5 +70,20 @@ module.exports = (pool) => {
         });
     });
     
+    router.put('/update', (req, res) => {
+        const { entId, description } = req.body;
+        pool.query(
+            'UPDATE entity SET description = $1 WHERE ent_id = $2',
+            [description, entId],
+            (error, result) => {
+                if (error) {
+                    res.status(500).json({ error: 'Internal server error' });
+                } else {
+                    res.json({ message: 'Entity updated successfully' });
+                }
+            }
+        );
+    });
+    
     return router;
 };

@@ -67,5 +67,20 @@ module.exports = (pool) => {
         });
     });
     
+    router.put('/update', (req, res) => {
+        const { permId, description } = req.body;
+        pool.query(
+            'UPDATE permissions SET description = $1 WHERE perm_id = $2',
+            [description, permId],
+            (error, result) => {
+                if (error) {
+                    res.status(500).json({ error: 'Internal server error' });
+                } else {
+                    res.json({ message: 'Permission updated successfully' });
+                }
+            }
+        );
+    });
+    
     return router;
 };

@@ -47,8 +47,8 @@ module.exports = (pool) => {
         const { email, password} = req.body;
 
         pool.query(
-            'INSERT INTO users (email, password, role_id) VALUES ($1, $2, $3) RETURNING user_id',
-            [email, password, 1],
+            'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING user_id',
+            [email, password],
             (error, result) => {
                 if (error) {
                     console.error('Error registering user:', error);
@@ -96,5 +96,20 @@ module.exports = (pool) => {
         });
     });
 
+    router.put('/update', (req, res) => {
+        const { userId, roleId, email, password } = req.body;
+        pool.query(
+            'UPDATE users SET role_id = $1, email = $2, password = $3 WHERE user_id = $4',
+            [roleId, email, password, userId],
+            (error, result) => {
+                if (error) {
+                    res.status(500).json({ error: 'Internal server error' });
+                } else {
+                    res.json({ message: 'User updated successfully' });
+                }
+            }
+        );
+    });
+    
     return router;
 };

@@ -68,5 +68,20 @@ module.exports = (pool) => {
         });
     });
 
+    router.put('/update', (req, res) => {
+        const { roleId, description } = req.body;
+        pool.query(
+            'UPDATE roles SET description = $1 WHERE role_id = $2',
+            [description, roleId],
+            (error, result) => {
+                if (error) {
+                    res.status(500).json({ error: 'Internal server error' });
+                } else {
+                    res.json({ message: 'Role updated successfully' });
+                }
+            }
+        );
+    });
+    
     return router;
 };
