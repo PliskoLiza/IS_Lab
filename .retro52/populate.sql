@@ -6,14 +6,15 @@ INSERT INTO roles (description) VALUES
 ('Commander'),
 ('Soldier'),
 ('Engineer'),
-('Retro52');
+('Admin');
 
 -- Populate permissions
 INSERT INTO permissions (description) VALUES
 ('Access classified information'),
 ('Operate machinery'),
-('Die for fatherland'),
-('Manage resources');
+('No access'),
+('Manage resources'),
+('All permissions');
 
 -- Populate regiment
 INSERT INTO regiment (commander_user_id, count, description) VALUES
@@ -46,10 +47,11 @@ BEGIN;
 
 -- Populate role_to_permissions
 INSERT INTO role_to_permissions (role_id, perm_id) VALUES
-(1, 1),
-(2, 2),
+(1, 3),
+(2, 1),
 (3, 3),
-(4, 4);
+(4, 2),
+(5, 5);
 
 -- Populate entity (e.g., tanks, socks)
 INSERT INTO entity (description) VALUES

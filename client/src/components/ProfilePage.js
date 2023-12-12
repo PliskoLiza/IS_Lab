@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState, useRef } from "react";
 import { AuthContext } from "./AuthContext";
 
 import '../css/profile.css';
-import {useNavigate} from "react-router-dom";
 
 export default function ProfilePage() {
   const { user } = useContext(AuthContext);
