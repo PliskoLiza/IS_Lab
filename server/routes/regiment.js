@@ -75,5 +75,20 @@ module.exports = (pool) => {
         });
     });
     
+    router.put('/update', (req, res) => {
+        const { regId, commanderUserId, count, description } = req.body;
+        pool.query(
+            'UPDATE regiment SET commander_user_id = $1, count = $2, description = $3 WHERE reg_id = $4',
+            [commanderUserId, count, description, regId],
+            (error, result) => {
+                if (error) {
+                    res.status(500).json({ error: 'Internal server error' });
+                } else {
+                    res.json({ message: 'Regiment updated successfully' });
+                }
+            }
+        );
+    });
+    
     return router;
 };
