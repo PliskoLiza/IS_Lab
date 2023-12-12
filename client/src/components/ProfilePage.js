@@ -7,8 +7,6 @@ import {useNavigate} from "react-router-dom";
 export default function ProfilePage() {
   const { user } = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
-  const [role, setRole] = useState(null);
-  const [regiment, setRegiment] = useState(null);
   const [error, setError] = useState("");
 
 
@@ -23,8 +21,6 @@ export default function ProfilePage() {
       if (response.ok) {
         const data = await response.json();
         setUserData(data);
-        setRegiment(data.regiment || "");
-        setRole(data.role || "");
       } else {
         console.error("Error retrieving user data:", response.statusText);
       }
@@ -52,10 +48,10 @@ export default function ProfilePage() {
             <span>id: {user.userId}</span>
           </div>
           <div>
-            <span>Role: {role}</span>
+            <span>Role: {user.role || "Not listed" }</span>
           </div>
           <div>
-            <span>Regiment: {regiment}</span>
+            <span>Regiment: {user.regiment || "Not listed"}</span>
           </div>
         </div>
       </div>
