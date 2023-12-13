@@ -69,6 +69,7 @@ import {AuthContext} from "./AuthContext";
                 <select value={formType} onChange={handleSelectChange}>
                     <option value="">Choice table</option>
                     <option value="users">Users</option>
+                    <option value="regiment">Regiment</option>
                     <option value="entity">Entity</option>
                     <option value="permissions">Permissions</option>
                 </select>

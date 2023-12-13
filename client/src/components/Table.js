@@ -9,13 +9,14 @@ const EditableTable = ({user, table}) => {
     const [data, setData] = useState([ { } ]);
 
 
-    // Функция для обновления данных в таблице
-    const handleEdit = (id, field, value) => {
-        setData(prevData =>
-            prevData.map(item =>
-                item.id === id ? { ...item, [field]: value } : item
-            )
-        );
+    const handleEdit = (row_data, name, value) => {
+      //  setData(prevData =>
+      //      prevData.map(item =>
+      //          item.id === id ? { ...item, [field]: value } : item
+     //       )
+     //   );
+        console.log(row_data, name, value)
+        updateData(row_data, name, value);
     };
 
     const getData = async () => {
@@ -38,6 +39,35 @@ const EditableTable = ({user, table}) => {
             console.error("Error retrieving user data:", error);
         }
     };
+
+    const updateData = async (row_data, name, value) => {
+        try {
+            {console.log(row_data)};
+            row_data[name] = value;
+            {console.log(row_data)};
+            console.log(table)
+            const response = await fetch(`/api/${table}/update`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    regId: 1,
+                    commanderUserId: 2,
+                    count: 112,
+                    description: 'First Regiment'
+                }),
+            });
+            if (response.ok) {
+                getData();
+            } else {
+                console.error("Error updating:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error updating:", error);
+        }
+    }
+
     useEffect(() => {
         getData();
         //const data = localStorage.getItem("data");
@@ -60,10 +90,10 @@ const EditableTable = ({user, table}) => {
                 </tr>
                 </thead>
                 <tbody>
-                {data.map((item, dataIndex) => (
+                {Array.isArray(data) && data.map((item, dataIndex) => (
                     <tr key={dataIndex}>
                         {header.map((headerName, index) => (
-                            <td key={index} contentEditable onBlur={(e) => handleEdit(dataIndex, headerName.toLowerCase(), e.target.innerText)}>
+                            <td key={index} contentEditable onBlur={(e) => handleEdit(item, headerName.toLowerCase(), e.target.innerText)}>
                                 {item[headerName.toLowerCase()]}
                             </td>
                         ))}
