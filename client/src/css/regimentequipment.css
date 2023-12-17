@@ -1,0 +1,51 @@
+.equipment-list-container {
+    padding: 20px;
+    width: 100%;
+}
+
+.equipment-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    width: 75%;
+}
+
+.equipment-name {
+    flex-grow: 1;
+}
+
+.equipment-inputs {
+    display: flex;
+    align-items: start;
+}
+
+.equipment-input {
+    padding: 5px;
+    margin-left: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.equipment-input input[type="text"],
+.equipment-input input[type="number"] {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: #13051b;
+    color: #fff;
+}
+
+.confirm-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.confirm-button:hover {
+    background-color: #45a049;
+}

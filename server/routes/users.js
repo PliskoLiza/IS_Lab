@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const checkUserPermission = require('./perm_check_user');
 
 module.exports = (pool) => {
     router.get('/get', (req, res) => {
@@ -23,7 +24,99 @@ module.exports = (pool) => {
         });
     });
 
+    router.get('/whatcando', async (req, res) => {
+        const { userId } = req.query;
     
+        try {
+            const query = `
+                SELECT a.name, a.description FROM actions a
+                JOIN permission_to_actions pa ON a.action_id = pa.action_id
+                JOIN role_to_permissions rp ON pa.perm_id = rp.perm_id
+                JOIN users u ON rp.role_id = u.role_id
+                WHERE u.user_id = $1
+            `;
+            const result = await pool.query(query, [userId]);
+    
+            const actions = result.rows.map(row => ({ name: row.name, description: row.description }));
+            res.json(actions);
+        } catch (error) {
+            console.error('Error:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    });
+    
+    router.get('/canreadown', async (req, res) => {
+        const { userId, tableName } = req.query;
+        
+        try {
+            const readAction = `Read Own ${tableName.charAt(0).toUpperCase() + tableName.slice(1).toLowerCase()}`;
+            console.log(readAction);
+    
+            const result = await checkUserPermission(pool, userId, readAction);
+            if (result.hasPermission) {
+                res.json({ canRead: true });
+            } else {
+                res.status(403).json({ canRead: false, message: 'Access denied' });
+            }
+        } catch (error) {
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    });
+
+    router.get('/canreadall', async (req, res) => {
+        const { userId, tableName } = req.query;
+        
+        try {
+            const readAction = `Read All ${tableName.charAt(0).toUpperCase() + tableName.slice(1).toLowerCase()}`;
+            console.log(readAction);
+    
+            const result = await checkUserPermission(pool, userId, readAction);
+            if (result.hasPermission) {
+                res.json({ canRead: true });
+            } else {
+                res.status(403).json({ canRead: false, message: 'Access denied' });
+            }
+        } catch (error) {
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    });
+    
+    router.get('/canwriteown', async (req, res) => {
+        const { userId, tableName } = req.query;
+
+        try {
+            const writeAction = `Write Own ${tableName.charAt(0).toUpperCase() + tableName.slice(1).toLowerCase()}`;
+    
+            console.log(writeAction);
+            const result = await checkUserPermission(pool, userId, writeAction);
+            if (result.hasPermission) {
+                res.json({ canWrite: true });
+            } else {
+                res.status(403).json({ canWrite: false, message: 'Access denied' });
+            }
+        } catch (error) {
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    });
+
+    router.get('/canwriteall', async (req, res) => {
+        const { userId, tableName } = req.query;
+
+        try {
+            const writeAction = `Write All ${tableName.charAt(0).toUpperCase() + tableName.slice(1).toLowerCase()}`;
+    
+            console.log(writeAction);
+            const result = await checkUserPermission(pool, userId, writeAction);
+            if (result.hasPermission) {
+                res.json({ canWrite: true });
+            } else {
+                res.status(403).json({ canWrite: false, message: 'Access denied' });
+            }
+        } catch (error) {
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    });
+
     // Login
     router.post("/login", (req, res) => {
         const { email, password } = req.body;

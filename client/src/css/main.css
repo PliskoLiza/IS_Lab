@@ -1,28 +1,26 @@
 * {
-  margin: 0 0 5px 0;
   padding: 0;
   box-sizing: border-box;
-  align-items: center;
   font-family: 'Lex', cursive;
 }
 
 body,
 html {
-    min-height: 100vh;
+  height: 100%;
+  max-width: 100vw;
+  
+  margin: 0;
+  padding: 0;
 }
 
 body {
   display: flex;
   flex-direction: column;
+
   align-items: normal;
 
-  min-height: 100%;
-  display: grid;
-  grid-template-rows: 1fr auto;
-
-  background-color: #543C52;
   color: #fff;
-  height: 100%;
+  background-color: #543C52;
 }
 
 header {
@@ -45,6 +43,17 @@ h2 {
 
 section {
   margin-bottom: 40px;
+}
+
+.root {
+  display: flex;
+  flex-direction: column;
+  min-width: 100vw;
+  min-height: 100vh;
+}
+
+.content {
+  flex: 1;
 }
 
 .games-container {

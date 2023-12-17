@@ -1,0 +1,52 @@
+/* Regiment Info Component Styles */
+.regiment-info {
+    background-color: #250535;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 1.5);
+    color: #fff;
+    width: 100%;
+}
+
+.regiment-info form {
+    display: flex;
+    flex-direction: column;
+}
+
+.regiment-info input[type="text"],
+.regiment-info input[type="number"] {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: #13051b;
+    color: #fff;
+}
+
+.regiment-info button {
+    padding: 10px 20px;
+    margin-right: 10px;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #4caf50; /* A pleasant green */
+    border: none;
+    color: #fff;
+}
+
+.regiment-info button:hover {
+    background-color: #367c39; /* Darker shade for hover */
+}
+
+.regiment-info .form-group {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.regiment-info label {
+    margin-right: 10px;
+    color: #fff; /* Assuming a light color for visibility */
+    min-width: 100px; /* Adjust as needed */
+}

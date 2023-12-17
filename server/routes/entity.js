@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const checkPermission = require('./perm_check');
 
 module.exports = (pool) => {
-    router.get('/get', (req, res) => {
+    router.get('/get', checkPermission(pool, 'Read All Entity'), (req, res) => {
         pool.query('SELECT * FROM entity', (error, result) => {
             if (error) {
                 res.status(500).json({ error: 'Internal server error' });
@@ -12,7 +13,7 @@ module.exports = (pool) => {
         });
     });
 
-    router.get('/get/:entId', (req, res) => {
+    router.get('/get/:entId', checkPermission(pool, 'Read All Entity'), (req, res) => {
         const { entId } = req.params;
         pool.query('SELECT * FROM entity WHERE ent_id = $1', [entId], (error, result) => {
             if (error) {
@@ -23,11 +24,11 @@ module.exports = (pool) => {
         });
     });
 
-    router.post('/create', (req, res) => {
-        const { user_id, count, description } = req.body;
+    router.post('/create', checkPermission(pool, 'Write All Entity'), (req, res) => {
+        const { userId, count, description } = req.body;
         pool.query(
             'INSERT INTO regiment (description) VALUES ($1, $2, $3) RETURNING ent_id',
-            [user_id, count, description],
+            [userId, count, description],
             (error, result) => {
                 if (error) {
                     res.status(500).json({ error: 'Internal server error' });
@@ -38,7 +39,7 @@ module.exports = (pool) => {
         );
     });
 
-    router.delete('/delete', (req, res) => {
+    router.delete('/delete', checkPermission(pool, 'Write All Entity'), (req, res) => {
         const { entId } = req.body;
     
         pool.connect((err, client, done) => {
@@ -70,7 +71,7 @@ module.exports = (pool) => {
         });
     });
     
-    router.put('/update', (req, res) => {
+    router.put('/update', checkPermission(pool, 'Write All Entity'), (req, res) => {
         const { entId, description } = req.body;
         pool.query(
             'UPDATE entity SET description = $1 WHERE ent_id = $2',

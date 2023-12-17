@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const checkPermission = require('./perm_check');
 
 module.exports = (pool) => {
-    router.get('/get', (req, res) => {
+    router.get('/get', checkPermission(pool, 'Read All Regiment'), (req, res) => {
         pool.query('SELECT * FROM regiment', (error, result) => {
             if (error) {
                 res.status(500).json({ error: 'Internal server error' });
@@ -12,7 +13,7 @@ module.exports = (pool) => {
         });
     });
 
-    router.get('/get/:regId', (req, res) => {
+    router.get('/get/:regId', checkPermission(pool, 'Read All Regiment'), (req, res) => {
         const { regId } = req.params;
         pool.query('SELECT * FROM regiment WHERE reg_id = $1', [regId], (error, result) => {
             if (error) {
@@ -23,11 +24,13 @@ module.exports = (pool) => {
         });
     });
 
-    router.post('/create', (req, res) => {
-        const { user_id, count, description } = req.body;
+    router.post('/create', checkPermission(pool, 'Write All Regiment'), (req, res) => {
+        console.log("Create regiment");
+
+        const { userId, count, description } = req.body;
         pool.query(
             'INSERT INTO regiment (commander_user_id, count, description) VALUES ($1, $2, $3) RETURNING reg_id',
-            [user_id, count, description],
+            [userId, count, description],
             (error, result) => {
                 if (error) {
                     res.status(500).json({ error: 'Internal server error' });
@@ -38,7 +41,7 @@ module.exports = (pool) => {
         );
     });
 
-    router.delete('/delete', (req, res) => {
+    router.delete('/delete', checkPermission(pool, 'Write All Regiment'), (req, res) => {
         const { regId } = req.body;
     
         pool.connect((err, client, done) => {
@@ -75,7 +78,7 @@ module.exports = (pool) => {
         });
     });
     
-    router.put('/update', (req, res) => {
+    router.put('/update', checkPermission(pool, 'Write All Regiment'), (req, res) => {
         const { regId, commanderUserId, count, description } = req.body;
         pool.query(
             'UPDATE regiment SET commander_user_id = $1, count = $2, description = $3 WHERE reg_id = $4',

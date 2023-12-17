@@ -8,6 +8,7 @@ import {
   Navigate
 } from "react-router-dom";
 
+import './css/main.css';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -27,18 +28,22 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Header />
-        <Routes>
-          <Route path="/" element={<MainPage />} />
-          <Route path="*" element={<NotFound />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path='/profile/:email' element={<ProfileChecker />} />
-          <Route exact path='/profile' element={<PrivateRoute />}>
-          <Route exact path='/profile' element={<ProfilePage />} />
-          </Route>
-        </Routes>
-        <Footer />
+        <div className="root">
+          <Header />
+          <div className="content">
+            <Routes>
+              <Route path="/" element={<MainPage />} />
+              <Route path="*" element={<NotFound />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path='/profile/:email' element={<ProfileChecker />} />
+              <Route exact path='/profile' element={<PrivateRoute />}>
+              <Route exact path='/profile' element={<ProfilePage />} />
+              </Route>
+            </Routes>
+          </div>
+          <Footer />
+        </div>
       </AuthProvider>
     </BrowserRouter>
   );

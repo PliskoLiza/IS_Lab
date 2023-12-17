@@ -85,3 +85,26 @@
   line-height: 1.5;
   white-space: pre-wrap;
 }
+
+.user-permissions table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-permissions th, .user-permissions td {
+  border: 1px solid #ffffff;
+  padding: 8px;
+  text-align: left;
+}
+
+.user-permissions th {
+  background-color: #130620;
+}
+
+.user-permissions tr:nth-child(odd) {
+  background-color: #521e8e;
+}
+
+.user-permissions tr:nth-child(even) {
+  background-color: #25004f;
+}

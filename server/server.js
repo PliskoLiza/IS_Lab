@@ -20,10 +20,12 @@ app.use(bodyParser.json());
 const userRoutes = require('./routes/users')(pool);
 const roleRoutes = require('./routes/roles')(pool);
 const entityRoutes = require('./routes/entity')(pool);
+const actionsRoutes = require('./routes/actions')(pool);
 const regimentRoutes = require('./routes/regiment')(pool);
 const profileRoutes = require('./routes/profile')(pool);
 const permissionRoutes = require('./routes/permissions')(pool);
 const userToRegimentRoutes = require('./routes/user_to_regiment')(pool);
+const permToActionsRoutes = require('./routes/permission_to_actions')(pool);
 const roleToPermissionRoutes = require('./routes/role_to_permissions')(pool);
 const entPerRegimentCurRoutes = require('./routes/ent_per_regiment_cur')(pool);
 const entPerRegimentReqRoutes = require('./routes/ent_per_regiment_req')(pool);
@@ -32,7 +34,7 @@ const entPerRegimentReqRoutes = require('./routes/ent_per_regiment_req')(pool);
 app.get("/api/debug/:tabName", (req, res) => {
     const { tabName } = req.params;
 
-    const allowedTables = ['users', 'roles', 'permissions', 'role_to_permissions', 'regiment', 'entity', 'ent_per_regiment_cur', 'ent_per_regiment_req'];
+    const allowedTables = ['users', 'roles', 'permissions', 'role_to_permissions', 'regiment', 'entity', 'ent_per_regiment_cur', 'ent_per_regiment_req', 'actions', 'permission_to_actions', 'user_to_regiment'];
     if (!allowedTables.includes(tabName)) {
         return res.status(400).json({ error: 'Invalid table name' });
     }
@@ -50,10 +52,12 @@ app.get("/api/debug/:tabName", (req, res) => {
 app.use('/api/users', userRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/entity', entityRoutes);
-app.use('/api/regiment', regimentRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/actions', actionsRoutes);
+app.use('/api/regiment', regimentRoutes);
 app.use('/api/permissions', permissionRoutes);
 app.use('/api/user_to_regiment', userToRegimentRoutes);
+app.use('/api/permission_to_actions', permToActionsRoutes);
 app.use('/api/role_to_permissions', roleToPermissionRoutes);
 app.use('/api/ent_per_regiment_cur', entPerRegimentCurRoutes);
 app.use('/api/ent_per_regiment_req', entPerRegimentReqRoutes);

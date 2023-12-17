@@ -1,8 +1,8 @@
--- Create tables without foreign key constraints
+-- Users, roles, permissions, and their relationships
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
     role_id INT,
-    email VARCHAR(255),
+    email VARCHAR(255) UNIQUE,
     password VARCHAR(255)
 );
 
@@ -22,6 +22,20 @@ CREATE TABLE role_to_permissions (
     PRIMARY KEY (role_id, perm_id)
 );
 
+-- Actions and linking them to permissions
+CREATE TABLE actions (
+    action_id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    description TEXT
+);
+
+CREATE TABLE permission_to_actions (
+    perm_id INT,
+    action_id INT,
+    PRIMARY KEY (perm_id, action_id)
+);
+
+-- Regiment, entity, and their associations
 CREATE TABLE regiment (
     reg_id SERIAL PRIMARY KEY,
     commander_user_id INT,
@@ -43,22 +57,28 @@ CREATE TABLE user_to_regiment (
 CREATE TABLE ent_per_regiment_cur (
     reg_id INT,
     ent_id INT,
+    count INT,
     PRIMARY KEY (reg_id, ent_id)
 );
 
 CREATE TABLE ent_per_regiment_req (
     reg_id INT,
     ent_id INT,
+    count INT,
     PRIMARY KEY (reg_id, ent_id)
 );
 
--- Add foreign key constraints
+-- Foreign key constraints
 ALTER TABLE users
     ADD FOREIGN KEY (role_id) REFERENCES roles(role_id);
 
 ALTER TABLE role_to_permissions
     ADD FOREIGN KEY (role_id) REFERENCES roles(role_id),
     ADD FOREIGN KEY (perm_id) REFERENCES permissions(perm_id);
+
+ALTER TABLE permission_to_actions
+    ADD FOREIGN KEY (perm_id) REFERENCES permissions(perm_id),
+    ADD FOREIGN KEY (action_id) REFERENCES actions(action_id);
 
 ALTER TABLE regiment
     ADD FOREIGN KEY (commander_user_id) REFERENCES users(user_id);

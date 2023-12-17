@@ -1,114 +1,153 @@
 import React, {useContext, useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
-import '../css/main.css';
-import EditableTable from "./Table";
 import {AuthContext} from "./AuthContext";
+import '../css/mainpage.css';
+import ProgressBarComponent from './ProgressBar';
+import RegimentInfoComponent from './RegimentManagement/RegimentInfo';
+import EquipmentListComponent from './RegimentManagement/EquipmentList';
 
-  const MainPage = () => {
-    const [answers, setAnswers] = useState(['', '', '']); // Состояние ответов, начальное значение для трех форм
-       const { user } = useContext(AuthContext);
-      const [userData, setUserData] = useState(null);
-      const [role, setRole] = useState(null);
-      const [regiment, setRegiment] = useState(null);
+const MainPage = () => {
+    const [loading, setLoading] = useState(true);
+    const [entities, setEntities] = useState({});
+    const { user, logout } = useContext(AuthContext);
+    const [userRegId, setUserRegId] = useState(null);
+    const [regimentData, setRegimentData] = useState(null);
+    const [regimentEntityReqData, setRegimentEntityReqData] = useState([]);
+    const [regimentEntityCurData, setRegimentEntityCurData] = useState([]);
 
-      const [formType, setFormType] = useState(localStorage.getItem("table") || "");
-    const handleInputChange = (index, value) => {
-      const updatedAnswers = [...answers];
-      updatedAnswers[index] = value;
-      setAnswers(updatedAnswers);
-    };
-
-      const fetchUserData = async () => {
-          try {
-              const response = await fetch(`/api/profile/get/${user.userId}`, {
-                  method: "GET",
-                  headers: {
-                      "Content-Type": "application/json",
-                  }
-              });
-              if (response.ok) {
-                  const userData = await response.json();
-                  setUserData(userData);
-                  setRegiment(userData.regiment || ""); // Устанавливаем regiment в state
-                  localStorage.setItem("regiment", JSON.stringify(regiment));
-                  setRole(userData.role || "");
-                  localStorage.setItem("role", JSON.stringify(role));
-              } else {
-                  console.error("Error retrieving user data:", response.statusText);
-              }
-          } catch (error) {
-              console.error("Error retrieving user data:", error);
-          }
-      };
-
-      useEffect(() => {
-          if (localStorage.getItem("table")) {
-              setFormType(localStorage.getItem("table"));
-          }
-          fetchUserData();
-      }, []);
-
-    const handleSubmit = (event) => {
-      event.preventDefault();
-      console.log('Ответы:', answers);
-      // Добавьте здесь логику отправки ответов на сервер или их обработки
-    };
-
-
-    const handleSelectChange = (event) => {
-        const newformType = event.target.value;
-      setFormType(newformType);
-      localStorage.setItem("table", newformType);
-      console.log(localStorage.getItem("table"));
-   //   callTable();
-    };
-
-    const renderChoice = () => {
-        if (role === 'Commander') {
-            return(
-                <select value={formType} onChange={handleSelectChange}>
-                    <option value="">Choice table</option>
-                    <option value="users">Users</option>
-                    <option value="regiment">Regiment</option>
-                    <option value="entity">Entity</option>
-                    <option value="permissions">Permissions</option>
-                </select>
-                );
-
+    useEffect(() => {
+        if (user) {
+            fetchUserData();
+            fetchAllEntities();
         } else {
-            return(
-                <select value={formType} onChange={handleSelectChange}>
-                    <option value="">Choice table</option>
-                    <option value="entity">Entity</option>
-                    <option value="permissions">Permissions</option>
-                    <option value="regiment">Regiment</option>
-                    <option value="roles">Roles</option>
-                    <option value="users">Users</option>
-                    <option value="ent_per_regiment_cur">Entity per regiment current</option>
-                    <option value="ent_per_regiment_req">Entity per regiment required</option>
-                    <option value="role_to_permissions">Role to permissions</option>
-                    <option value="user_to_regiment">User to regiment</option>
-                </select>
-            );
+            setLoading(false);
+        }
+    }, [user]);
+
+    const getUserRegimentID = async () => {
+        try {
+            const response = await fetch(`/api/user_to_regiment/get/user/${user.userId}?userId=${user.userId}`);
+            if (response.ok) {
+                const data = await response.json();
+                return data[0].reg_id;
+            }
+        } catch (error) {
+            console.error('Error fetching user regiment ID:', error);
+        }
+        return null;
+    }
+    
+    const fetchUserData = async () => {
+        setLoading(true);
+        try {
+            const regId = await getUserRegimentID();
+            if (regId) {
+                setUserRegId(regId);
+                console.log(userRegId); // Log the directly returned value
+                await fetchRegimentData(regId);
+                await fetchRegimentEntityReqData(regId);
+                await fetchRegimentEntityCurData(regId);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+        setLoading(false);
+    };
+    
+    const fetchAllEntities = async () => {
+        try {
+            const response = await fetch(`/api/entity/get?userId=${user.userId}`);
+            if (response.ok) {
+                const data = await response.json();
+                // Convert array to object for easier access
+                const entityMap = data.reduce((acc, entity) => {
+                    acc[entity.ent_id] = entity.description;
+                    return acc;
+                }, {});
+                setEntities(entityMap);
+            }
+        } catch (error) {
+            console.error('Error fetching entities:', error);
         }
     };
 
-    const callTable = () =>{
-        return(
-            <EditableTable user = {user} table = {localStorage.getItem("table")}/>
+    const fetchRegimentData = async (regId) => {
+        try {
+            const regResponse = await fetch(`/api/regiment/get/${regId}?userId=${user.userId}`);
+            if (regResponse.ok) {
+                const regData = await regResponse.json();
+                setRegimentData(regData);
+            } else {
+                console.error('Failed to fetch regiment data');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    const fetchRegimentEntityReqData = async (regId) => {
+        try {
+            const response = await fetch(`/api/ent_per_regiment_req/get/regiment/${regId}?userId=${user.userId}`);
+            if (response.ok) {
+                const data = await response.json();
+                setRegimentEntityReqData(data);
+            }
+        } catch (error) {
+            console.error('Error fetching regiment required entity data:', error);
+        }
+    };
+
+    const fetchRegimentEntityCurData = async (regId) => {
+        try {
+            const response = await fetch(`/api/ent_per_regiment_cur/get/regiment/${regId}?userId=${user.userId}`);
+            if (response.ok) {
+                const data = await response.json();
+                setRegimentEntityCurData(data);
+            }
+        } catch (error) {
+            console.error('Error fetching regiment current entity data:', error);
+        }
+    };
+
+    const calculateProgress = (entityId) => {
+        const required = regimentEntityReqData.find(item => item.ent_id === entityId)?.count || 0;
+        const current = regimentEntityCurData.find(item => item.ent_id === entityId)?.count || 0;
+        const percentage = Math.min((current / required) * 100, 100);
+        return { current, required, percentage };
+    };
+
+    const handleRegimentUpdated = (updatedRegimentData) => {
+        setRegimentData(updatedRegimentData);
+    };
+
+    // Inside MainPage component
+    const handleEquipmentUpdated = () => {
+        // Fetch the updated equipment list
+        fetchRegimentEntityReqData(userRegId);
+        fetchRegimentEntityCurData(userRegId);
+    };
+
+    
+    if (!user) {
+        return (
+            <div className='main-page'>
+                <Link to="/login">
+                    <button>You need to be logged in to edit the database.</button>
+                </Link>
+            </div>
         );
     }
 
-    useEffect(() => {
-        callTable();
-        }, [formType]);
-
     return (
-        <div>
-            <h1>Choice table</h1>
-            {renderChoice()}
-            {callTable()}
+        <div className='main-page'>
+          {loading ? <h1>Loading...</h1> : (
+            <>
+              {regimentData && <RegimentInfoComponent regimentData={regimentData} user={user} onRegimentUpdated={handleRegimentUpdated} canEdit={true} />}
+              {entities && <EquipmentListComponent entities={entities} user={user} calculateProgress={calculateProgress} onEquipmentUpdated={handleEquipmentUpdated} regimentId={userRegId} canEdit={true} />}
+            </>
+          )}
         </div>
-    );
-  };
+      );
+    };
+
 export default MainPage;

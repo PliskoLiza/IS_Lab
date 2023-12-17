@@ -3,7 +3,7 @@ const router = express.Router();
 
 module.exports = (pool) => {
     router.get('/get', (req, res) => {
-        pool.query('SELECT * FROM user_to_regiment', (error, result) => {
+        pool.query('SELECT * FROM permission_to_actions', (error, result) => {
             if (error) {
                 res.status(500).json({ error: 'Internal server error' });
             } else {
@@ -13,9 +13,9 @@ module.exports = (pool) => {
     });
 
     // Role-specific permissions
-    router.get('/get/user/:userId', (req, res) => {
-        const { userId } = req.params;
-        pool.query('SELECT * FROM user_to_regiment WHERE user_id = $1', [userId], (error, result) => {
+    router.get('/get/action/:actId', (req, res) => {
+        const { actId } = req.params;
+        pool.query('SELECT * FROM permission_to_actions WHERE action_id = $1', [actId], (error, result) => {
             if (error) {
                 res.status(500).json({ error: 'Internal server error' });
             } else {
@@ -25,9 +25,9 @@ module.exports = (pool) => {
     });
 
     // Permission-specific roles
-    router.get('/get/regiment/:regId', (req, res) => {
-        const { regId } = req.params;
-        pool.query('SELECT * FROM user_to_regiment WHERE reg_id = $1', [regId], (error, result) => {
+    router.get('/get/permission/:permId', (req, res) => {
+        const { permId } = req.params;
+        pool.query('SELECT * FROM permission_to_actions WHERE perm_id = $1', [permId], (error, result) => {
             if (error) {
                 res.status(500).json({ error: 'Internal server error' });
             } else {
@@ -37,10 +37,10 @@ module.exports = (pool) => {
     });
 
     router.post('/create', (req, res) => {
-        const { userId, reg_id } = req.body;
+        const { actId, permId } = req.body;
         pool.query(
-            'INSERT INTO user_to_regiment (user_id, reg_id) VALUES ($1, $2)',
-            [userId, reg_id],
+            'INSERT INTO permission_to_actions (action_id, perm_id) VALUES ($1, $2)',
+            [actId, permId],
             (error, result) => {
                 if (error) {
                     res.status(500).json({ error: 'Internal server error' });
@@ -50,9 +50,9 @@ module.exports = (pool) => {
             }
         );
     });
-
+    
     router.delete('/delete', (req, res) => {
-        const { userId, regId } = req.body;
+        const { actId, permId } = req.body;
     
         pool.connect((err, client, done) => {
             if (err) {
@@ -66,7 +66,7 @@ module.exports = (pool) => {
                 }
     
                 try {
-                    await client.query('DELETE FROM user_to_regiment WHERE user_id = $1 AND reg_id = $2', [userId, regId]);
+                    await client.query('DELETE FROM permission_to_actions WHERE action_id = $1 AND perm_id = $2', [actId, permId]);
                     await client.query('COMMIT');
                     res.json({ message: 'Entity deleted successfully' });
                 } catch (error) {
