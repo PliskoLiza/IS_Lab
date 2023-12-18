@@ -49,7 +49,7 @@ INSERT INTO permission_to_actions (perm_id, action_id) SELECT
 -- Linking permissions to actions for Regiment Management
 INSERT INTO permission_to_actions (perm_id, action_id) SELECT 
     (SELECT perm_id FROM permissions WHERE description = 'Regiment Management'), 
-    action_id FROM actions WHERE name IN ('Read All Regiment', 'Write Own Regiment', 'Read All Entity', 'Write All Entity');
+    action_id FROM actions WHERE name IN ('Read Own User', 'Write Own User', 'Read All Regiment', 'Write Own Regiment', 'Write All Regiment', 'Read All Entity', 'Write All Entity');
 
 -- Linking permissions to actions for Full Administrative Access
 INSERT INTO permission_to_actions (perm_id, action_id) SELECT 
@@ -88,7 +88,8 @@ BEGIN;
 -- Populate role_to_permissions
 INSERT INTO role_to_permissions (role_id, perm_id) VALUES
 (2, 2), -- Commander with access to classified information
-(3, 1); -- Soldier with no special access
+(3, 1), -- Soldier with no special access
+(5, 3); -- Admin with access to users and roles information
 
 -- Populate entity (e.g., tanks, socks)
 INSERT INTO entity (description) VALUES
@@ -114,7 +115,8 @@ INSERT INTO entity (description) VALUES
 INSERT INTO user_to_regiment (reg_id, user_id) VALUES
 (1, 1),
 (1, 2),
-(2, 3);
+(2, 3),
+(4, 1);
 
 INSERT INTO ent_per_regiment_cur (reg_id, ent_id, count) VALUES
 (1, 1, 27), 

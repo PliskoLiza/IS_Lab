@@ -19,6 +19,7 @@ import ProfilePage from './components/ProfilePage';
 import RegisterPage from './components/RegisterPage';
 import PrivateRoute from "./components/PrivateRoute";
 import GuestProfilePage from './components/GuestProfilePage';
+import AdminPage from './components/AdminPage';
 
 // authentification handler
 import { AuthContext, AuthProvider } from "./components/AuthContext";
@@ -35,6 +36,7 @@ export default function App() {
               <Route path="/" element={<MainPage />} />
               <Route path="*" element={<NotFound />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/admin" element={<AdminPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path='/profile/:email' element={<ProfileChecker />} />
               <Route exact path='/profile' element={<PrivateRoute />}>

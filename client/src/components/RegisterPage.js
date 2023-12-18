@@ -8,6 +8,7 @@ export default function LoginPage() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [token, setToken] = useState("");
     const [errorMessage, seterrorMessage] = useState("");
 
 
@@ -19,18 +20,22 @@ export default function LoginPage() {
         setPassword(e.target.value);
     };
 
+    const handleTokenChange = (e) => {
+        setToken(e.target.value);
+    };
+
 
     const handleRegistration = async (e) => {
         e.preventDefault();
 
         // Perform validation checks here
-        if (!email || !password) {
+        if (!email || !password || !token) {
             alert("Please fill in all the fields");
             return;
         }
 
         // Send registration data to the server
-        const registrationData = { email, password };
+        const registrationData = { email, password, token };
 
         try {
             const response = await fetch("/api/users/register", {
@@ -73,6 +78,14 @@ export default function LoginPage() {
                     placeholder="Password"
                     value={password}
                     onChange={handlePasswordChange}
+                    required
+                />
+                <h3>Token</h3>
+                <input
+                    type="password"
+                    placeholder="Token"
+                    value={token}
+                    onChange={handleTokenChange}
                     required
                 />
 

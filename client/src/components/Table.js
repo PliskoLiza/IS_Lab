@@ -3,25 +3,33 @@ import { AuthContext } from "./AuthContext";
 import '../css/table.css';
 
 
-const EditableTable = ({user, table}) => {
-    const [header, setHeader] = useState([ ]);
-    const [rows, setRows] = useState([ { } ]);
+const EditableTable = () => {
+    const [header_users, setHeaderUsers] = useState([ ]);
+    const [header_roles, setHeaderRoles] = useState([ ]);
+    const [header_permissions, setHeaderPermissions] = useState([ ]);
+    const [roles, setRoles] = useState([ { } ]);
+    const [permissions, setPermissions] = useState([ { } ]);
     const [data, setData] = useState([ { } ]);
+    const [equipmentCounts, setEquipmentCounts] = useState({});
+    const [dirtyFlags, setDirtyFlags] = useState({});
 
+    const [isNewRow, setIsNewRow] = useState(false);
 
-    const handleEdit = (row_data, name, value) => {
-      //  setData(prevData =>
-      //      prevData.map(item =>
-      //          item.id === id ? { ...item, [field]: value } : item
-     //       )
-     //   );
-        console.log(row_data, name, value)
-        updateData(row_data, name, value);
+    const [inputRole, setInputRole] = useState('');
+
+    const handleSubmitRole = async () => {
+        console.log(inputRole);
+
     };
 
-    const getData = async () => {
+    const handleInputChangeRole = (event) => {
+        setInputRole(event.target.value);
+    };
+
+
+    const getUserData = async () => {
         try {
-            const response = await fetch(`/api/${table}/get`, {
+            const response = await fetch(`/api/profile/get`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -31,7 +39,7 @@ const EditableTable = ({user, table}) => {
                 const data = await response.json();
                 setData(data);
                 localStorage.setItem("data", data);
-                setHeader(Object.keys(data[0]));
+                setHeaderUsers(Object.keys(data[0]));
             } else {
                 console.error("Error retrieving user data:", response.statusText);
             }
@@ -40,60 +48,135 @@ const EditableTable = ({user, table}) => {
         }
     };
 
-    const updateData = async (row_data, name, value) => {
+    const getRoleData = async () => {
         try {
-            {console.log(row_data)};
-            row_data[name] = value;
-            {console.log(row_data)};
-            console.log(table)
-            const response = await fetch(`/api/${table}/update`, {
-                method: "PUT",
+            const response = await fetch(`/api/roles/get`, {
+                method: "GET",
                 headers: {
                     "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    regId: 1,
-                    commanderUserId: 2,
-                    count: 112,
-                    description: 'First Regiment'
-                }),
+                }
             });
             if (response.ok) {
-                getData();
+                const roles = await response.json();
+                setRoles(roles);
+                localStorage.setItem("roles", roles);
+                setHeaderRoles(Object.keys(roles[0]));
             } else {
-                console.error("Error updating:", response.statusText);
+                console.error("Error retrieving user data:", response.statusText);
             }
         } catch (error) {
-            console.error("Error updating:", error);
+            console.error("Error retrieving user data:", error);
         }
-    }
+    };
+
+    const getPermissionsData = async () => {
+        try {
+            const response = await fetch(`/api/permissions/get`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+            if (response.ok) {
+                const permissions = await response.json();
+                setPermissions(permissions);
+                localStorage.setItem("permissions", permissions);
+                setHeaderPermissions(Object.keys(permissions[0]));
+            } else {
+                console.error("Error retrieving user data:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error retrieving user data:", error);
+        }
+    };
 
     useEffect(() => {
-        getData();
-        //const data = localStorage.getItem("data");
+        getUserData();
+        getRoleData();
+        getPermissionsData();
     }, []);
 
-    useEffect(() => {
-        getData();
-        //const data = localStorage.getItem("data");
-    }, [localStorage.getItem("table")]);
+
+    const addRole = () => {
+        return (
+            <div className="equipment-inputs">
+                <input
+                    type="text"
+                    className="equipment-input"
+                    placeholder="Role"
+                    onChange={handleInputChangeRole}
+                />
+            </div>
+        );
+    }
+
+    const handleConfirm = (value) => {
+        console.log(value.target)
+    }
 
 
     return (
         <div className="table-container">
-            <table id="editableTable">
+            <h3>Users</h3>
+            <table id="UsersTable">
                 <thead>
                 <tr>
-                    {header.map((header, index) => (
-                        <th key={index}>{header}</th>
-                    ))}
+                    <th>User id</th>
+                    <th>Role</th>
+                    <th>Regiment</th>
+                    <th>Email</th>
+                    <th>Password</th>
                 </tr>
                 </thead>
                 <tbody>
                 {Array.isArray(data) && data.map((item, dataIndex) => (
                     <tr key={dataIndex}>
-                        {header.map((headerName, index) => (
-                            <td key={index} contentEditable onBlur={(e) => handleEdit(item, headerName.toLowerCase(), e.target.innerText)}>
+                        {header_users.map((headerName, index) => (
+                            <td key={index}>
+                                {item[headerName.toLowerCase()]}
+                            </td>
+                        ))}
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+
+            <h3>Roles</h3>
+            <table id="RolesTable">
+                <thead>
+                <tr>
+                    <th>Role id</th>
+                    <th>Role</th>
+                </tr>
+                </thead>
+                <tbody>
+                {Array.isArray(roles) && roles.map((item, dataIndex) => (
+                    <tr key={dataIndex}>
+                        {header_roles.map((headerName, index) => (
+                            <td key={index}>
+                                {item[headerName.toLowerCase()]}
+                            </td>
+                        ))}
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+            <button className="confirm-button"  onClick={handleSubmitRole}> Add Role </button>
+            {addRole()}
+
+            <h3>Permissions</h3>
+            <table id="PermissionsTable">
+                <thead>
+                <tr>
+                    <th>Permission id</th>
+                    <th>Permission</th>
+                </tr>
+                </thead>
+                <tbody>
+                {Array.isArray(permissions) && permissions.map((item, dataIndex) => (
+                    <tr key={dataIndex}>
+                        {header_permissions.map((headerName, index) => (
+                            <td key={index}>
                                 {item[headerName.toLowerCase()]}
                             </td>
                         ))}
