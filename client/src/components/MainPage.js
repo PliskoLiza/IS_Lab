@@ -127,6 +127,10 @@ const MainPage = () => {
         fetchRegimentEntityCurData(userRegId);
     };
 
+    const canEdit = () => {
+      return !!(user && localStorage.getItem("role") !== 'Basic User Access');
+    }
+
     
     if (!user) {
         return (
@@ -142,8 +146,8 @@ const MainPage = () => {
         <div className='main-page'>
           {loading ? <h1>Loading...</h1> : (
             <>
-              {regimentData && <RegimentInfoComponent regimentData={regimentData} user={user} onRegimentUpdated={handleRegimentUpdated} canEdit={true} />}
-              {entities && <EquipmentListComponent entities={entities} user={user} calculateProgress={calculateProgress} onEquipmentUpdated={handleEquipmentUpdated} regimentId={userRegId} canEdit={true} />}
+              {regimentData && <RegimentInfoComponent regimentData={regimentData} user={user} onRegimentUpdated={handleRegimentUpdated} canEdit={canEdit()} />}
+              {entities && <EquipmentListComponent entities={entities} user={user} calculateProgress={calculateProgress} onEquipmentUpdated={handleEquipmentUpdated} regimentId={userRegId} canEdit={canEdit()} />}
             </>
           )}
         </div>

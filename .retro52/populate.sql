@@ -87,8 +87,8 @@ BEGIN;
 
 -- Populate role_to_permissions
 INSERT INTO role_to_permissions (role_id, perm_id) VALUES
-(2, 1), -- Commander with access to classified information
-(3, 3); -- Soldier with no special access
+(2, 2), -- Commander with access to classified information
+(3, 1); -- Soldier with no special access
 
 -- Populate entity (e.g., tanks, socks)
 INSERT INTO entity (description) VALUES
