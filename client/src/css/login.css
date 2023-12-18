@@ -133,3 +133,47 @@
   text-decoration: none;
   transform: skewX(-10deg);
 }
+.token-input-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.token-input {
+  flex-grow: 1;
+  border: 2px solid transparent;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #f8f8f8;
+}
+
+/* Fixed width for spinner and checkmark container */
+.spinner, .checkmark-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px; /* Assign a fixed width */
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top: 4px solid blue;
+  width: 20px;
+  height: 20px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.token-input.invalid {
+  border-color: red;
+}
+
+.token-input.valid {
+  border-color: green;
+}

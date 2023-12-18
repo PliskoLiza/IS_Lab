@@ -17,9 +17,11 @@ const pool = new Pool({
 app.use(bodyParser.json());
 
 // Import user routes
+
 const userRoutes = require('./routes/users')(pool);
 const roleRoutes = require('./routes/roles')(pool);
 const entityRoutes = require('./routes/entity')(pool);
+const tokensRoutes = require('./routes/tokens')(pool);
 const actionsRoutes = require('./routes/actions')(pool);
 const regimentRoutes = require('./routes/regiment')(pool);
 const profileRoutes = require('./routes/profile')(pool);
@@ -34,7 +36,7 @@ const entPerRegimentReqRoutes = require('./routes/ent_per_regiment_req')(pool);
 app.get("/api/debug/:tabName", (req, res) => {
     const { tabName } = req.params;
 
-    const allowedTables = ['users', 'roles', 'permissions', 'role_to_permissions', 'regiment', 'entity', 'ent_per_regiment_cur', 'ent_per_regiment_req', 'actions', 'permission_to_actions', 'user_to_regiment'];
+    const allowedTables = ['users', 'roles', 'permissions', 'role_to_permissions', 'regiment', 'entity', 'ent_per_regiment_cur', 'ent_per_regiment_req', 'actions', 'permission_to_actions', 'user_to_regiment', 'tokens'];
     if (!allowedTables.includes(tabName)) {
         return res.status(400).json({ error: 'Invalid table name' });
     }
@@ -52,6 +54,7 @@ app.get("/api/debug/:tabName", (req, res) => {
 app.use('/api/users', userRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/entity', entityRoutes);
+app.use('/api/tokens', tokensRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/actions', actionsRoutes);
 app.use('/api/regiment', regimentRoutes);

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const checkPermission = require('./perm_check');
+const { checkReadRegimentAccess, checkWriteRegimentAccess } = require('./perm_check_reg');
 
 module.exports = (pool) => {
     router.get('/get', checkPermission(pool, 'Read All Regiment'), (req, res) => {
@@ -13,7 +14,7 @@ module.exports = (pool) => {
         });
     });
 
-    router.get('/get/:regId', checkPermission(pool, 'Read All Regiment'), (req, res) => {
+    router.get('/get/:regId', checkReadRegimentAccess(pool), (req, res) => {
         const { regId } = req.params;
         pool.query('SELECT * FROM regiment WHERE reg_id = $1', [regId], (error, result) => {
             if (error) {
@@ -41,7 +42,7 @@ module.exports = (pool) => {
         );
     });
 
-    router.delete('/delete', checkPermission(pool, 'Write All Regiment'), (req, res) => {
+    router.delete('/delete', checkWriteRegimentAccess(pool), (req, res) => {
         const { regId } = req.body;
     
         pool.connect((err, client, done) => {
@@ -78,7 +79,7 @@ module.exports = (pool) => {
         });
     });
     
-    router.put('/update', checkPermission(pool, 'Write All Regiment'), (req, res) => {
+    router.put('/update', checkWriteRegimentAccess(pool), (req, res) => {
         const { regId, commanderUserId, count, description } = req.body;
         pool.query(
             'UPDATE regiment SET commander_user_id = $1, count = $2, description = $3 WHERE reg_id = $4',

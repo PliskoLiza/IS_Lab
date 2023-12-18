@@ -12,11 +12,14 @@ const MainPage = () => {
     const { user, logout } = useContext(AuthContext);
     const [userRegId, setUserRegId] = useState(null);
     const [regimentData, setRegimentData] = useState(null);
+    const [userPermissions, setUserPermissions] = useState([]);
     const [regimentEntityReqData, setRegimentEntityReqData] = useState([]);
     const [regimentEntityCurData, setRegimentEntityCurData] = useState([]);
 
     useEffect(() => {
         if (user) {
+            fetchUserPermissions(user.userId).then(permissions => setUserPermissions(permissions));
+
             fetchUserData();
             fetchAllEntities();
         } else {
@@ -29,13 +32,29 @@ const MainPage = () => {
             const response = await fetch(`/api/user_to_regiment/get/user/${user.userId}?userId=${user.userId}`);
             if (response.ok) {
                 const data = await response.json();
-                return data[0].reg_id;
+                return data[0]?.reg_id || 0;
             }
         } catch (error) {
             console.error('Error fetching user regiment ID:', error);
         }
         return null;
     }
+    
+    const fetchUserPermissions = async (userId) => {
+        try {
+            const response = await fetch(`/api/users/whatcando?userId=${userId}`);
+            if (response.ok) {
+                const permissions = await response.json();
+                return permissions.map(permission => permission.name);
+            } else {
+                console.error('Failed to fetch user permissions');
+                return [];
+            }
+        } catch (error) {
+            console.error('Error fetching user permissions:', error);
+            return [];
+        }
+    };
     
     const fetchUserData = async () => {
         setLoading(true);
@@ -128,16 +147,29 @@ const MainPage = () => {
     };
 
     const canEdit = () => {
-      return !!(user && localStorage.getItem("role") !== 'Basic User Access');
+        return userPermissions.includes("Write Own Regiments") || userPermissions.includes("Write All Entity");
     }
+
+    const canSee = () => {
+        return (userPermissions.includes("Read Own Regiments") || userPermissions.includes("Read All Entity")) && userRegId;
+    };
 
     
     if (!user) {
         return (
             <div className='main-page'>
                 <Link to="/login">
-                    <button>You need to be logged in to edit the database.</button>
+                    <button>Press ME to login for regiment management.</button>
                 </Link>
+            </div>
+        );
+    }
+
+    if (!canSee()) {
+        return (
+            <div className='main-page'>
+                {!userRegId && <h1> You don`t have the regiment to manage </h1>}
+                {userRegId && <h1> You don`t have the necessary permissions </h1>}
             </div>
         );
     }

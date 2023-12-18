@@ -8,20 +8,25 @@ INSERT INTO roles (description) VALUES
 ('Engineer'),
 ('Admin');
 
+INSERT INTO tokens (token_hash, is_valid) VALUES
+('922bbf87', TRUE),
+('2b9f9a7e', TRUE),
+('37dd1c33', TRUE);
+
 -- Populate actions
 -- Actions for users table
 INSERT INTO actions (name, description) VALUES
 ('Read All Users', 'Read all entries in users table'),
 ('Write All Users', 'Write to all entries in users table'),
-('Read Own User', 'Read own entry in users table'),
-('Write Own User', 'Write to own entry in users table');
+('Read Own Users', 'Read own entry in users table'),
+('Write Own Users', 'Write to own entry in users table');
 
 -- Actions for regiment table
 INSERT INTO actions (name, description) VALUES
-('Read All Regiment', 'Read all entries in regiment table'),
-('Write All Regiment', 'Write to all entries in regiment table'),
-('Read Own Regiment', 'Read own entry in regiment table'),
-('Write Own Regiment', 'Write to own entry in regiment table');
+('Read All Regiments', 'Read all entries in regiment table'),
+('Write All Regiments', 'Write to all entries in regiment table'),
+('Read Own Regiments', 'Read own entry in regiment table'),
+('Write Own Regiments', 'Write to own entry in regiment table');
 
 -- Actions for entity table
 INSERT INTO actions (name, description) VALUES
@@ -44,12 +49,12 @@ INSERT INTO permissions (description) VALUES
 -- Linking permissions to actions for Basic User Access
 INSERT INTO permission_to_actions (perm_id, action_id) SELECT 
     (SELECT perm_id FROM permissions WHERE description = 'Basic User Access'), 
-    action_id FROM actions WHERE name IN ('Read Own User', 'Write Own User');
+    action_id FROM actions WHERE name IN ('Read Own Users', 'Write Own Users');
 
 -- Linking permissions to actions for Regiment Management
 INSERT INTO permission_to_actions (perm_id, action_id) SELECT 
     (SELECT perm_id FROM permissions WHERE description = 'Regiment Management'), 
-    action_id FROM actions WHERE name IN ('Read Own User', 'Write Own User', 'Read All Regiment', 'Write Own Regiment', 'Write All Regiment', 'Read All Entity', 'Write All Entity');
+    action_id FROM actions WHERE name IN ('Read Own Users', 'Write Own Users', 'Read Own Regiments', 'Write Own Regiments', 'Read All Entity', 'Write All Entity');
 
 -- Linking permissions to actions for Full Administrative Access
 INSERT INTO permission_to_actions (perm_id, action_id) SELECT 
@@ -115,8 +120,7 @@ INSERT INTO entity (description) VALUES
 INSERT INTO user_to_regiment (reg_id, user_id) VALUES
 (1, 1),
 (1, 2),
-(2, 3),
-(4, 1);
+(2, 3);
 
 INSERT INTO ent_per_regiment_cur (reg_id, ent_id, count) VALUES
 (1, 1, 27), 

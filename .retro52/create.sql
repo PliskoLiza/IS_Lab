@@ -68,6 +68,12 @@ CREATE TABLE ent_per_regiment_req (
     PRIMARY KEY (reg_id, ent_id)
 );
 
+CREATE TABLE tokens (
+    token_id SERIAL PRIMARY KEY,
+    token_hash VARCHAR(255) NOT NULL,
+    is_valid BOOLEAN
+);
+
 -- Foreign key constraints
 ALTER TABLE users
     ADD FOREIGN KEY (role_id) REFERENCES roles(role_id);

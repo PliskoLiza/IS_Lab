@@ -45,78 +45,6 @@ module.exports = (pool) => {
         }
     });
     
-    router.get('/canreadown', async (req, res) => {
-        const { userId, tableName } = req.query;
-        
-        try {
-            const readAction = `Read Own ${tableName.charAt(0).toUpperCase() + tableName.slice(1).toLowerCase()}`;
-            console.log(readAction);
-    
-            const result = await checkUserPermission(pool, userId, readAction);
-            if (result.hasPermission) {
-                res.json({ canRead: true });
-            } else {
-                res.status(403).json({ canRead: false, message: 'Access denied' });
-            }
-        } catch (error) {
-            res.status(500).json({ error: 'Internal server error' });
-        }
-    });
-
-    router.get('/canreadall', async (req, res) => {
-        const { userId, tableName } = req.query;
-        
-        try {
-            const readAction = `Read All ${tableName.charAt(0).toUpperCase() + tableName.slice(1).toLowerCase()}`;
-            console.log(readAction);
-    
-            const result = await checkUserPermission(pool, userId, readAction);
-            if (result.hasPermission) {
-                res.json({ canRead: true });
-            } else {
-                res.status(403).json({ canRead: false, message: 'Access denied' });
-            }
-        } catch (error) {
-            res.status(500).json({ error: 'Internal server error' });
-        }
-    });
-    
-    router.get('/canwriteown', async (req, res) => {
-        const { userId, tableName } = req.query;
-
-        try {
-            const writeAction = `Write Own ${tableName.charAt(0).toUpperCase() + tableName.slice(1).toLowerCase()}`;
-    
-            console.log(writeAction);
-            const result = await checkUserPermission(pool, userId, writeAction);
-            if (result.hasPermission) {
-                res.json({ canWrite: true });
-            } else {
-                res.status(403).json({ canWrite: false, message: 'Access denied' });
-            }
-        } catch (error) {
-            res.status(500).json({ error: 'Internal server error' });
-        }
-    });
-
-    router.get('/canwriteall', async (req, res) => {
-        const { userId, tableName } = req.query;
-
-        try {
-            const writeAction = `Write All ${tableName.charAt(0).toUpperCase() + tableName.slice(1).toLowerCase()}`;
-    
-            console.log(writeAction);
-            const result = await checkUserPermission(pool, userId, writeAction);
-            if (result.hasPermission) {
-                res.json({ canWrite: true });
-            } else {
-                res.status(403).json({ canWrite: false, message: 'Access denied' });
-            }
-        } catch (error) {
-            res.status(500).json({ error: 'Internal server error' });
-        }
-    });
-
     // Login
     router.post("/login", (req, res) => {
         const { email, password } = req.body;
@@ -137,22 +65,56 @@ module.exports = (pool) => {
 
     // Register
     router.post("/register", (req, res) => {
-        const { email, password} = req.body;
-
-        pool.query(
-            'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING user_id',
-            [email, password],
-            (error, result) => {
-                if (error) {
-                    console.error('Error registering user:', error);
-                    res.status(500).json({ error: 'Internal server error' });
-                } else {
-                    res.status(200).json({ userId: result.rows[0].user_id });
-                }
+        const { email, password, token } = req.body;
+    
+        // Start a database transaction
+        pool.connect((err, client, done) => {
+            if (err) {
+                console.error('Error acquiring client:', err);
+                return res.status(500).json({ error: 'Internal server error' });
             }
-        );
+    
+            client.query('BEGIN', async (err) => {
+                if (err) {
+                    done(); // release the client back to the pool
+                    console.error('Error starting transaction:', err);
+                    return res.status(500).json({ error: 'Internal server error' });
+                }
+    
+                try {
+                    const tokenResult = await client.query(
+                        'SELECT is_valid FROM tokens WHERE token_hash = $1',
+                        [token]
+                    );
+    
+                    if (tokenResult.rows.length === 0 || !tokenResult.rows[0].is_valid) {
+                        throw new Error('Invalid or expired token');
+                    }
+    
+                    const userResult = await client.query(
+                        'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING user_id',
+                        [email, password]
+                    );
+    
+                    await client.query(
+                        'UPDATE tokens SET is_valid = FALSE WHERE token_hash = $1',
+                        [token]
+                    );
+    
+                    await client.query('COMMIT'); // Commit the transaction
+    
+                    res.status(200).json({ userId: userResult.rows[0].user_id });
+                } catch (error) {
+                    await client.query('ROLLBACK'); // Rollback the transaction on error
+                    console.error('Transaction error:', error);
+                    res.status(500).json({ error: error.message });
+                } finally {
+                    done(); // release the client back to the pool
+                }
+            });
+        });
     });
-
+        
     router.delete('/delete', (req, res) => {
         const { userId } = req.body;
     

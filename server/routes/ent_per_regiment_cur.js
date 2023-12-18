@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const checkPermission = require('./perm_check');
+const { checkReadRegimentAccess, checkWriteRegimentAccess } = require('./perm_check_reg');
 
 module.exports = (pool) => {
     router.get('/get', checkPermission(pool, 'Read All Regiment'), (req, res) => {
@@ -14,7 +15,7 @@ module.exports = (pool) => {
     });
 
     // Entity-specific
-    router.get('/get/entity/:entityId', checkPermission(pool, 'Read All Regiment'), (req, res) => {
+    router.get('/get/entity/:entityId', checkReadRegimentAccess(pool), checkPermission(pool, 'Read All Entity'), (req, res) => {
         const { entityId } = req.params;
         pool.query('SELECT * FROM ent_per_regiment_cur WHERE ent_id = $1', [entityId], (error, result) => {
             if (error) {
@@ -26,9 +27,9 @@ module.exports = (pool) => {
     });
 
     // Regiment-specific
-    router.get('/get/regiment/:regimentId', checkPermission(pool, 'Read All Regiment'), (req, res) => {
-        const { regimentId } = req.params;
-        pool.query('SELECT * FROM ent_per_regiment_cur WHERE reg_id = $1', [regimentId], (error, result) => {
+    router.get('/get/regiment/:regId', checkReadRegimentAccess(pool), (req, res) => {
+        const { regId } = req.params;
+        pool.query('SELECT * FROM ent_per_regiment_cur WHERE reg_id = $1', [regId], (error, result) => {
             if (error) {
                 res.status(500).json({ error: 'Internal server error' });
             } else {
@@ -37,7 +38,22 @@ module.exports = (pool) => {
         });
     });
 
-    router.put('/update', checkPermission(pool, 'Write All Regiment'), async (req, res) => {
+    router.post('/create', checkWriteRegimentAccess(pool), (req, res) => {
+        const { regId, entId } = req.body;
+        pool.query(
+            'INSERT INTO ent_per_regiment_cur (reg_id, ent_id) VALUES ($1, $2)',
+            [regId, entId],
+            (error, result) => {
+                if (error) {
+                    res.status(500).json({ error: 'Internal server error' });
+                } else {
+                    res.status(200).json({ message: 'Record created successfully' });
+                }
+            }
+        );
+    });
+
+    router.put('/update', checkWriteRegimentAccess(pool), async (req, res) => {
         const { regId, entId, count } = req.body;
         console.log('Update current: ', regId, entId, count);
 
@@ -69,7 +85,7 @@ module.exports = (pool) => {
         }
     });
 
-    router.delete('/delete', checkPermission(pool, 'Write All Regiment'), (req, res) => {
+    router.delete('/delete', checkWriteRegimentAccess(pool), (req, res) => {
         const { regId, entId } = req.body;
     
         pool.connect((err, client, done) => {
