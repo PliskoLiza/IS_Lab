@@ -12,13 +12,12 @@ import './css/main.css';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
-import MainPage from './components/MainPage';
+import ManagementPage from './components/ManagementPage';
 import LoginPage from './components/LoginPage';
 import NotFound from './components/NotFoundPage';
 import ProfilePage from './components/ProfilePage';
 import RegisterPage from './components/RegisterPage';
 import PrivateRoute from "./components/PrivateRoute";
-import GuestProfilePage from './components/GuestProfilePage';
 import AdminPage from './components/AdminPage';
 
 // authentification handler
@@ -33,15 +32,17 @@ export default function App() {
           <Header />
           <div className="content">
             <Routes>
-              <Route path="/" element={<MainPage />} />
+              <Route exact path='/' element={<PrivateRoute />} >
+                <Route exact path='/' element={<ProfilePage />} />
+              </Route>
               <Route path="*" element={<NotFound />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/admin" element={<AdminPage />} />
               <Route path="/register" element={<RegisterPage />} />
-              <Route path='/profile/:email' element={<ProfileChecker />} />
-              <Route exact path='/profile' element={<PrivateRoute />}>
-              <Route exact path='/profile' element={<ProfilePage />} />
+              <Route exact path='/profile' element={<PrivateRoute />} >
+                <Route exact path='/profile' element={<ProfilePage />} />
               </Route>
+              <Route path="/management" element={<ManagementPage />} />
             </Routes>
           </div>
           <Footer />
@@ -49,15 +50,4 @@ export default function App() {
       </AuthProvider>
     </BrowserRouter>
   );
-}
-
-function ProfileChecker() {
-  const { email } = useParams();
-  const { user } = useContext(AuthContext);
-
-  if (user && user.email === email) {
-    return <Navigate to="/profile" replace />;
-  }
-
-  return <GuestProfilePage />;
 }

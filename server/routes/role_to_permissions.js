@@ -37,10 +37,10 @@ module.exports = (pool) => {
     });
 
     router.post('/create', (req, res) => {
-        const { role_id, perm_id } = req.body;
+        const { roleId, permId } = req.body;
         pool.query(
             'INSERT INTO role_to_permissions (role_id, perm_id) VALUES ($1, $2)',
-            [role_id, perm_id],
+            [roleId, permId],
             (error, result) => {
                 if (error) {
                     res.status(500).json({ error: 'Internal server error' });

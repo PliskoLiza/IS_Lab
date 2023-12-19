@@ -1,33 +1,95 @@
-th,
-td {
-    padding-left: 10px;
-    padding-right: 10px;
+/* table.css */
+
+.table-container {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 20px;
+    background-color: #190c31;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.delete-button {
-    background-color: #a21111;
-    color: white;
-    padding: 1px 10px 1px 10px;;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 5px;
-}
-
-.input {
-    padding: 5px;
-    margin-left: 10px;
+table {
+    width: 100%;
+    border-collapse: collapse;
     margin-top: 20px;
-    border-radius: 5px;
+}
+
+th, td {
+    text-align: left;
+    padding: 8px;
+    border: 1px solid #dddddd;
+}
+
+th {
+    background-color: #4f165c;
+}
+
+tr:nth-child(odd) {
+    background-color: #210a1b;
+}
+
+tr:nth-child(even) {
+    background-color: #280c2e;
+}
+
+.mapping-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    padding: 5px;
+    background-color: #9d4a7d;
+    border-radius: 4px;
+}
+
+.mapping-row span {
+    flex-grow: 1;
+}
+
+button {
+    padding: 5px 10px;
+    margin-left: 10px;
+    background-color: #5c6bc0;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #3949ab;
+}
+
+select {
+    padding: 5px;
+    border-radius: 4px;
     border: 1px solid #ddd;
 }
 
-.input input[type="text"],
-.input input[type="number"] {
-    padding: 10px;
-    margin-top: 15px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    background-color: #13051b;
-    color: #fff;
+/* Align the Add button and select dropdown */
+td > button, td > select {
+    vertical-align: top;
+}
+
+/* Spacing for the Remove buttons inside the mappings */
+.mapping-row > button {
+    padding: 2px 5px;
+    background-color: #ef5350;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.mapping-row > button:hover {
+    background-color: #d32f2f;
+}
+
+/* Style for the 'Add' and 'Remove' buttons */
+.add-button, .remove-button {
+    min-width: 80px;
+    box-sizing: border-box;
 }

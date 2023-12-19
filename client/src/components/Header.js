@@ -17,12 +17,12 @@ export default function Header() {
       <h1><Link to="/">Work In Proress </Link></h1>
       <nav>
         <ul>
-          <li><Link to="/">Management</Link></li>
+          {user && <li><Link to="/management">Management</Link></li>}
+          {user && <li><Link to="/admin">Administration</Link></li>}
           <li><Link to="/profile">Profile</Link></li>
           {user && <li onClick={handleLogout}>Logout</li>}
           {!user && <li><Link to="/login">Login</Link></li>}
           {!user && <li><Link to="/register">Registration</Link></li>}
-          {user && localStorage.getItem("role") === 'Admin' && <li><Link to="/admin">Administration</Link></li>}
         </ul>
       </nav>
     </div>

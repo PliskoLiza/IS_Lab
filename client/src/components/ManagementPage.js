@@ -2,11 +2,10 @@ import React, {useContext, useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import {AuthContext} from "./AuthContext";
 import '../css/mainpage.css';
-import ProgressBarComponent from './ProgressBar';
 import RegimentInfoComponent from './RegimentManagement/RegimentInfo';
 import EquipmentListComponent from './RegimentManagement/EquipmentList';
 
-const MainPage = () => {
+const ManagementPage = () => {
     const [loading, setLoading] = useState(true);
     const [entities, setEntities] = useState({});
     const { user, logout } = useContext(AuthContext);
@@ -154,7 +153,6 @@ const MainPage = () => {
         return (userPermissions.includes("Read Own Regiments") || userPermissions.includes("Read All Entity")) && userRegId;
     };
 
-    
     if (!user) {
         return (
             <div className='main-page'>
@@ -162,6 +160,14 @@ const MainPage = () => {
                     <button>Press ME to login for regiment management.</button>
                 </Link>
             </div>
+        );
+    }
+
+    if (loading) {
+        return ( 
+        <div className='main-page'>
+            <h1>Loading...</h1> 
+        </div>
         );
     }
 
@@ -176,14 +182,10 @@ const MainPage = () => {
 
     return (
         <div className='main-page'>
-          {loading ? <h1>Loading...</h1> : (
-            <>
-              {regimentData && <RegimentInfoComponent regimentData={regimentData} user={user} onRegimentUpdated={handleRegimentUpdated} canEdit={canEdit()} />}
-              {entities && <EquipmentListComponent entities={entities} user={user} calculateProgress={calculateProgress} onEquipmentUpdated={handleEquipmentUpdated} regimentId={userRegId} canEdit={canEdit()} />}
-            </>
-          )}
+            {regimentData && <RegimentInfoComponent regimentData={regimentData} user={user} onRegimentUpdated={handleRegimentUpdated} canEdit={canEdit()} />}
+            {entities && <EquipmentListComponent entities={entities} user={user} calculateProgress={calculateProgress} onEquipmentUpdated={handleEquipmentUpdated} regimentId={userRegId} canEdit={canEdit()} />}
         </div>
       );
     };
 
-export default MainPage;
+export default ManagementPage;
