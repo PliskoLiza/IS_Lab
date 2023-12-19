@@ -3,3 +3,31 @@ td {
     padding-left: 10px;
     padding-right: 10px;
 }
+
+.delete-button {
+    background-color: #a21111;
+    color: white;
+    padding: 1px 10px 1px 10px;;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.input {
+    padding: 5px;
+    margin-left: 10px;
+    margin-top: 20px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.input input[type="text"],
+.input input[type="number"] {
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: #13051b;
+    color: #fff;
+}

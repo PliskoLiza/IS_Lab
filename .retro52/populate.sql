@@ -120,7 +120,8 @@ INSERT INTO entity (description) VALUES
 INSERT INTO user_to_regiment (reg_id, user_id) VALUES
 (1, 1),
 (1, 2),
-(2, 3);
+(2, 3),
+(1, 4);
 
 INSERT INTO ent_per_regiment_cur (reg_id, ent_id, count) VALUES
 (1, 1, 27), 
