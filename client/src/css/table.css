@@ -9,31 +9,31 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-table {
+.table-container table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
 }
 
-th, td {
+.table-container th, td {
     text-align: left;
     padding: 8px;
     border: 1px solid #dddddd;
 }
 
-th {
+.table-container th {
     background-color: #4f165c;
 }
 
-tr:nth-child(odd) {
+.table-container tr:nth-child(odd) {
     background-color: #210a1b;
 }
 
-tr:nth-child(even) {
+.table-container tr:nth-child(even) {
     background-color: #280c2e;
 }
 
-.mapping-row {
+.table-container .mapping-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -43,11 +43,11 @@ tr:nth-child(even) {
     border-radius: 4px;
 }
 
-.mapping-row span {
+.table-container .mapping-row span {
     flex-grow: 1;
 }
 
-button {
+.table-container button {
     padding: 5px 10px;
     margin-left: 10px;
     background-color: #5c6bc0;
@@ -58,23 +58,23 @@ button {
     transition: background-color 0.3s ease;
 }
 
-button:hover {
+.table-container button:hover {
     background-color: #3949ab;
 }
 
-select {
+.table-container select {
     padding: 5px;
     border-radius: 4px;
     border: 1px solid #ddd;
 }
 
 /* Align the Add button and select dropdown */
-td > button, td > select {
+.table-container td > button, td > select {
     vertical-align: top;
 }
 
 /* Spacing for the Remove buttons inside the mappings */
-.mapping-row > button {
+.table-container .mapping-row > button {
     padding: 2px 5px;
     background-color: #ef5350;
     color: white;
@@ -84,12 +84,12 @@ td > button, td > select {
     transition: background-color 0.3s ease;
 }
 
-.mapping-row > button:hover {
+.table-container .mapping-row > button:hover {
     background-color: #d32f2f;
 }
 
 /* Style for the 'Add' and 'Remove' buttons */
-.add-button, .remove-button {
+.table-container .add-button, .remove-button {
     min-width: 80px;
     box-sizing: border-box;
 }

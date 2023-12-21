@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import '../../css/table.css';
 
 const Table = ({ data, headers, title }) => (
-    <div>
+    <div className='table-container' >
         <h3>{title}</h3>
         <table>
             <thead>

@@ -61,7 +61,6 @@ const ManagementPage = () => {
             const regId = await getUserRegimentID();
             if (regId) {
                 setUserRegId(regId);
-                console.log(userRegId); // Log the directly returned value
                 await fetchRegimentData(regId);
                 await fetchRegimentEntityReqData(regId);
                 await fetchRegimentEntityCurData(regId);

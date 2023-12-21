@@ -22,7 +22,6 @@ const EquipmentListComponent = ({ entities, user, calculateProgress, onEquipment
 
     const handleCountChange = (entId, type, value) => {
         const parsedValue = parseInt(value);
-        console.log("'" + value + "'", parsedValue, isNaN(parsedValue));
         setEquipmentCounts({
             ...equipmentCounts,
             [entId]: {

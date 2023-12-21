@@ -53,8 +53,6 @@ export default function AdminPage() {
     }, []);
 
     const updateRolePermission = async (item, permId, action) => {
-        console.log(item, permId, action);
-
         const method = action === 'add' ? 'POST' : 'DELETE';
         const body = { roleId: item.role_id, permId: permId };
         const url = `/api/role_to_permissions/${action === 'add' ? 'create' : 'delete'}`;
@@ -76,8 +74,6 @@ export default function AdminPage() {
     };
 
     const updatePermissionAction = async (item, actionId, action) => {
-        console.log(item, actionId, action);
-
         const method = action === 'add' ? 'POST' : 'DELETE';
         const body = { permId: item.perm_id, actId: actionId };
         const url = `/api/permission_to_actions/${action === 'add' ? 'create' : 'delete'}`;
@@ -98,9 +94,71 @@ export default function AdminPage() {
         }
     };
 
+    const createNewRole = async (description) => {
+        try {
+            const response = await fetch('/api/roles/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ description })
+            });
+            if (!response.ok) throw new Error('Failed to create new role');
     
+            const updatedRoles = await fetchData('/api/roles/get');
+            setRoles(updatedRoles);
+        } catch (error) {
+            console.error('Error creating new role:', error);
+        }
+    };
+    
+    const createNewPermission = async (description) => {
+        try {
+            const response = await fetch('/api/permissions/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ description })
+            });
+            if (!response.ok) throw new Error('Failed to create new permission');
+    
+            const updatedPermission = await fetchData('/api/permissions/get');
+            setPermissions(updatedPermission);
+        } catch (error) {
+            console.error('Error creating new permission:', error);
+        }
+    };
+
+    const removePermission = async (item) => {
+        try {
+            const response = await fetch('/api/permissions/delete', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ permId: item.perm_id })
+            });
+            if (!response.ok) throw new Error('Failed to delete role');
+    
+            const updatedPermission = await fetchData('/api/permissions/get');
+            setPermissions(updatedPermission);
+        } catch (error) {
+            console.error('Error deleting role:', error);
+        }
+    }
+
+    const removeRole = async (item) => {
+        try {
+            const response = await fetch('/api/roles/delete', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ roleId: item.role_id })
+            });
+            if (!response.ok) throw new Error('Failed to delete role');
+    
+            const updatedRoles = await fetchData('/api/roles/get');
+            setRoles(updatedRoles);
+        } catch (error) {
+            console.error('Error deleting role:', error);
+        }
+    }
+
     const canSee = () => {
-        console.log(userPermissions);
         return (userPermissions.includes("Read All Users") || userPermissions.includes("Write All Users"));
     };
 
@@ -144,6 +202,8 @@ export default function AdminPage() {
                 title="Roles" 
                 mapDisplayKey="description"
                 itemDisplayKey="description"
+                removeItem={removeRole}
+                createNewItem={createNewRole}
             />
             <EditableTable 
                 mapKey="perm_id"
@@ -155,6 +215,8 @@ export default function AdminPage() {
                 title="Permissions" 
                 mapDisplayKey="name"
                 itemDisplayKey="description"
+                removeItem={removePermission}
+                createNewItem={createNewPermission}
             />
         </div>
     );

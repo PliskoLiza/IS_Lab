@@ -26,8 +26,6 @@ module.exports = (pool) => {
     });
 
     router.post('/create', checkPermission(pool, 'Write All Regiment'), (req, res) => {
-        console.log("Create regiment");
-
         const { userId, count, description } = req.body;
         pool.query(
             'INSERT INTO regiment (commander_user_id, count, description) VALUES ($1, $2, $3) RETURNING reg_id',

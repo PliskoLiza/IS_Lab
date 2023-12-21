@@ -1,6 +1,8 @@
 .header_class {
     display: flex;
     background-color: #000000;
+
+    align-items: center;
 }
 
 .header_class h1 {

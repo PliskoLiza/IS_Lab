@@ -55,7 +55,6 @@ module.exports = (pool) => {
 
     router.put('/update', checkWriteRegimentAccess(pool), async (req, res) => {
         const { regId, entId, count } = req.body;
-        console.log('Update current: ', regId, entId, count);
 
         try {
             // Check if the entry exists

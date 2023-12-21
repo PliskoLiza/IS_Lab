@@ -12,7 +12,7 @@ function extractRelevantData(item, mappingData, mapKey) {
         });
 }
 
-const EditableRow = ({ item, mappingData, allOptions, updateMapping, mapKey, commonKeyForOptions, itemDisplayKey, mapDisplayKey }) => {
+const EditableRow = ({ item, mappingData, allOptions, updateMapping, mapKey, commonKeyForOptions, itemDisplayKey, mapDisplayKey, removeItem }) => {
     const [selectedOption, setSelectedOption] = useState('');
 
     const relevantMappings = extractRelevantData(item, mappingData, mapKey);
@@ -40,6 +40,9 @@ const EditableRow = ({ item, mappingData, allOptions, updateMapping, mapKey, com
     return (
         <tr>
             <td>{item[itemDisplayKey]}</td>
+            <td>
+                <button onClick={() => removeItem(item)}> Delete </button>
+            </td>
             <td colSpan="1">
                 {relevantMappings.map(mapping => (
                     <div key={mapping[commonKeyForOptions]} className="mapping-row">
@@ -60,14 +63,40 @@ const EditableRow = ({ item, mappingData, allOptions, updateMapping, mapKey, com
     );
 };
 
-const EditableTable = ({ data, mappingData, allOptions, updateMapping, title, mapKey, commonKeyForOptions, mapDisplayKey, itemDisplayKey }) => {
+const NewItemRow = ({ createNewItem, newItemKey }) => {
+    const [newItemValue, setNewItemValue] = useState('');
+
+    const handleCreateClick = () => {
+        createNewItem(newItemValue);
+        setNewItemValue(''); // Reset the input field after creating the item
+    };
+
     return (
-        <div>
+        <tr>
+            <td>
+                <input
+                    type="text"
+                    value={newItemValue}
+                    onChange={(e) => setNewItemValue(e.target.value)}
+                    placeholder={`New ${newItemKey}`}
+                />
+            </td>
+            <td colSpan="3">
+                <button onClick={handleCreateClick}>Create</button>
+            </td>
+        </tr>
+    );
+};
+
+const EditableTable = ({ data, mappingData, allOptions, updateMapping, title, mapKey, commonKeyForOptions, mapDisplayKey, itemDisplayKey, removeItem, createNewItem }) => {
+    return (
+        <div className='table-container'>
             <h3>{title}</h3>
             <table>
                 <thead>
                     <tr>
                         <th>Description</th>
+                        <th>Delete row</th>
                         <th>Current Mappings</th>
                         <th>Options</th>
                     </tr>
@@ -78,6 +107,7 @@ const EditableTable = ({ data, mappingData, allOptions, updateMapping, title, ma
                             key={item.id}
                             item={item}
                             mapKey={mapKey}
+                            removeItem={removeItem}
                             allOptions={allOptions}
                             mappingData={mappingData}
                             updateMapping={updateMapping}
@@ -86,6 +116,7 @@ const EditableTable = ({ data, mappingData, allOptions, updateMapping, title, ma
                             commonKeyForOptions={commonKeyForOptions}
                         />
                     ))}
+                    <NewItemRow createNewItem={createNewItem} newItemKey={itemDisplayKey} />
                 </tbody>
             </table>
         </div>

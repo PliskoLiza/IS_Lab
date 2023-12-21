@@ -19,7 +19,6 @@ export default function ProfilePage() {
         }
       });
       if (response.ok) {
-        console.log(response);
         const userData = await response.json();
         setUserData(userData);
         localStorage.setItem("role", userData.role);

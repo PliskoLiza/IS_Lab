@@ -1,7 +1,4 @@
 const checkUserPermission = async (pool, userId, actionName) => {
-    console.log(userId);
-    console.log(actionName);
-
     const query = `
         SELECT * FROM permission_to_actions pa
         JOIN role_to_permissions rp ON pa.perm_id = rp.perm_id
