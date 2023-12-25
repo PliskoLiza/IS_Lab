@@ -13,7 +13,7 @@ const ProgressBarComponent = ({ percentage, label }) => {
             <div
                 className="progress-bar-fill"
                 style={{
-                    width: `${percentage}%`,
+                    width: `${Math.min(percentage, 100)}%`,
                     backgroundColor: interpolateColor(percentage),
                 }}
             ></div>

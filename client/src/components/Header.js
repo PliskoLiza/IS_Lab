@@ -14,10 +14,11 @@ export default function Header() {
 
   return (
     <div className='header_class'>
-      <h1><Link to="/">Work In Proress </Link></h1>
+      <h1><Link to="/"> MilStream. </Link></h1>
       <nav>
         <ul>
           {user && <li><Link to="/management">Management</Link></li>}
+          {user && <li><Link to="/hll-management">Overall control</Link></li>}
           {user && <li><Link to="/admin">Administration</Link></li>}
           <li><Link to="/profile">Profile</Link></li>
           {user && <li onClick={handleLogout}>Logout</li>}

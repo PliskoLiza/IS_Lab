@@ -19,6 +19,7 @@ import ProfilePage from './components/ProfilePage';
 import RegisterPage from './components/RegisterPage';
 import PrivateRoute from "./components/PrivateRoute";
 import AdminPage from './components/AdminPage';
+import HighLevelManagement from './components/HighLevelManagement'
 
 // authentification handler
 import { AuthContext, AuthProvider } from "./components/AuthContext";
@@ -43,6 +44,7 @@ export default function App() {
                 <Route exact path='/profile' element={<ProfilePage />} />
               </Route>
               <Route path="/management" element={<ManagementPage />} />
+              <Route path="/hll-management" element={<HighLevelManagement />} />
             </Routes>
           </div>
           <Footer />

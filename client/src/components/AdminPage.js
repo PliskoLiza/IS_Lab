@@ -5,6 +5,15 @@ import { Link } from 'react-router-dom';
 import EditableTable from "./Table/EditableTable";
 import { AuthContext } from "./AuthContext";
 
+function generateRandomHash(length = 12) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+}
+
 export default function AdminPage() {
     const fetchData = async (url) => {
         try {
@@ -25,10 +34,12 @@ export default function AdminPage() {
     const [actions, setActions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [permissions, setPermissions] = useState([]);
+    const [inviteToken, setInviteToken] = useState(null);
     const [userPermissions, setUserPermissions] = useState([]);
     const [rolePermissions, setRolePermissions] = useState([]);
     const [permissionActions, setPermissionActions] = useState([]);
 
+    
     useEffect(() => {
         const initializeData = async () => {
             const userPermissions = await fetchData(`/api/users/whatcando?userId=${user.userId}`);
@@ -158,6 +169,26 @@ export default function AdminPage() {
         }
     }
 
+    const createUserHash = async () => {
+        try {
+            const randomHash = generateRandomHash();
+            console.log(randomHash);
+
+            const response = await fetch('/api/tokens/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({hash: randomHash})
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to create token');
+            }
+    
+        } catch (error) {
+            console.error('Error updating permission action:', error);
+        }
+    };
+
     const canSee = () => {
         return (userPermissions.includes("Read All Users") || userPermissions.includes("Write All Users"));
     };
@@ -189,35 +220,42 @@ export default function AdminPage() {
     }
 
     return (
-        <div className="table-container">
-            <Table data={actions} headers={actions.length > 0 ? Object.keys(actions[0]) : []} title="Actions" />
+        <>
+            <div>
+                <h2> Invite user: </h2>
+                <button onClick={createUserHash} > Generate hash: </button>
+                <h3>{inviteToken || ""}</h3>
+            </div>
+            <div className="table-container">
+                <Table data={actions} headers={actions.length > 0 ? Object.keys(actions[0]) : []} title="Actions" />
 
-            <EditableTable 
-                data={roles} 
-                mapKey="role_id"
-                commonKeyForOptions="perm_id"
-                mappingData={rolePermissions}
-                allOptions={permissions}
-                updateMapping={updateRolePermission}
-                title="Roles" 
-                mapDisplayKey="description"
-                itemDisplayKey="description"
-                removeItem={removeRole}
-                createNewItem={createNewRole}
-            />
-            <EditableTable 
-                mapKey="perm_id"
-                commonKeyForOptions="action_id"
-                data={permissions} 
-                mappingData={permissionActions}
-                allOptions={actions}
-                updateMapping={updatePermissionAction}
-                title="Permissions" 
-                mapDisplayKey="name"
-                itemDisplayKey="description"
-                removeItem={removePermission}
-                createNewItem={createNewPermission}
-            />
-        </div>
+                <EditableTable 
+                    data={roles} 
+                    mapKey="role_id"
+                    commonKeyForOptions="perm_id"
+                    mappingData={rolePermissions}
+                    allOptions={permissions}
+                    updateMapping={updateRolePermission}
+                    title="Roles" 
+                    mapDisplayKey="description"
+                    itemDisplayKey="description"
+                    removeItem={removeRole}
+                    createNewItem={createNewRole}
+                />
+                <EditableTable 
+                    mapKey="perm_id"
+                    commonKeyForOptions="action_id"
+                    data={permissions} 
+                    mappingData={permissionActions}
+                    allOptions={actions}
+                    updateMapping={updatePermissionAction}
+                    title="Permissions" 
+                    mapDisplayKey="name"
+                    itemDisplayKey="description"
+                    removeItem={removePermission}
+                    createNewItem={createNewPermission}
+                />
+            </div>
+        </>
     );
 }
