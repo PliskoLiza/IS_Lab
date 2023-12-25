@@ -9,6 +9,9 @@ const EquipmentListComponent = ({ entities, user, calculateProgress, onEquipment
     const [error, setError] = useState('');
     const [dirtyFlags, setDirtyFlags] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [changesSummary, setChangesSummary] = useState('');
     const [equipmentCounts, setEquipmentCounts] = useState({});
 
     useEffect(() => {
@@ -39,25 +42,94 @@ const EquipmentListComponent = ({ entities, user, calculateProgress, onEquipment
     };
     
     const handleSubmit = async () => {
-        setIsLoading(true);
         setError('');
+        let summary = '';
+        
         try {
             for (const [entId, counts] of Object.entries(equipmentCounts)) {
+                let changes = [];
                 if (dirtyFlags[entId]?.current) {
                     await updateCount('current', entId, counts.current || 0);
+                    changes.push(`Current count for ${entities[entId]}: ${counts.current}`);
                 }
                 if (dirtyFlags[entId]?.required) {
                     await updateCount('required', entId, counts.required || 0);
+                    changes.push(`Required count for ${entities[entId]}: ${counts.required}`);
+                }
+                if (changes.length > 0) {
+                    summary += changes.join('\n') + '\n';
                 }
             }
-            onEquipmentUpdated();
+            setChangesSummary(summary);
+
+            if (summary.trim().length > 0) {
+                setIsLoading(true);
+                setIsModalOpen(true);
+            }
+            else {
+                alert('No changes were made');
+            }
         } catch (error) {
             setError('Failed to update equipment data.');
             console.error('Error:', error);
         }
-        setIsLoading(false);
     };
-
+    
+    const handleFinalSubmit = async () => {
+        if (!selectedFile) {
+            alert('Please select a file to upload.');
+            return;
+        }
+    
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+    
+        try {
+            // const response = await fetch('/api/upload', {
+            //     method: 'POST',
+            //     body: formData
+            // });
+            // if (!response.ok) {
+            //     throw new Error('File upload failed');
+            // }
+    
+            await onEquipmentUpdated();
+            setSelectedFile(null);
+            setIsLoading(false);
+            setIsModalOpen(false);
+        } catch (error) {
+            console.error('Error:', error);
+            setError('Failed to upload file.');
+        }
+    };
+    
+    const handleFileChange = (event) => {
+        setSelectedFile(event.target.files[0]);
+    };
+    
+    const ChangesModal = ({ isOpen, onClose, summary }) => {
+        if (!isOpen) return null;
+    
+        return (
+            <div className="modal">
+                <div className="modal-content">
+                    <span className="close" onClick={onClose}>&times;</span>
+                    <h2>Change Summary</h2>
+                    <pre>{summary}</pre>
+                    <div>
+                        <label>Reason for Change: </label>
+                        <input
+                            type="file"
+                            onChange={handleFileChange}
+                            accept=".pdf,.doc,.docx" // Specify the file types you want to accept
+                        />
+                    </div>
+                    <button onClick={handleFinalSubmit}>Submit</button>
+                </div>
+            </div>
+        );
+    };
+        
     const updateCount = async (type, entId, count) => {
         const endpoint = type === 'current' ? '/api/ent_per_regiment_cur/update' : '/api/ent_per_regiment_req/update';
         try {
@@ -162,10 +234,25 @@ const EquipmentListComponent = ({ entities, user, calculateProgress, onEquipment
                     </div>
                 );
             })}
-
+            {
+                isModalOpen && 
+                <ChangesModal
+                    isOpen={isModalOpen}
+                    onClose={() => {
+                        setIsLoading(false);
+                        setSelectedFile(null);
+                        setIsModalOpen(false);
+                    }}
+                    summary={changesSummary}
+                />
+            }
             {
                 canEdit &&
-                <button className="confirm-button" onClick={handleSubmit} disabled={isLoading}>
+                <button 
+                    className="confirm-button" 
+                    onClick={handleSubmit} 
+                    disabled={isLoading}
+                >
                     {isLoading ? 'Updating...' : 'Confirm'}
                 </button>
             }

@@ -31,7 +31,9 @@ INSERT INTO actions (name, description) VALUES
 -- Actions for entity table
 INSERT INTO actions (name, description) VALUES
 ('Read All Entity', 'Read all entries in regiment table'),
-('Write All Entity', 'Write to own entry in regiment table');
+('Write All Entity', 'Write to own entry in regiment table'),
+('Read All Tokens', 'Read generated tokens for users intitation'),
+('Write All Tokens', 'Create new invitation tokens');
 
 -- Populate permissions with sets of actions
 -- Permission for basic user access
