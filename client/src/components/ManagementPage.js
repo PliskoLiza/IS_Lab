@@ -5,6 +5,9 @@ import '../css/mainpage.css';
 import RegimentInfoComponent from './RegimentManagement/RegimentInfo';
 import EquipmentListComponent from './RegimentManagement/EquipmentList';
 
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+
 const ManagementPage = () => {
     const [loading, setLoading] = useState(true);
     const [entities, setEntities] = useState({});
@@ -14,6 +17,19 @@ const ManagementPage = () => {
     const [userPermissions, setUserPermissions] = useState([]);
     const [regimentEntityReqData, setRegimentEntityReqData] = useState([]);
     const [regimentEntityCurData, setRegimentEntityCurData] = useState([]);
+
+    const exportPDF = async () => {
+        const input = document.getElementById('tableToExport'); // Assuming your table has this ID
+        const canvas = await html2canvas(input);
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF({
+            orientation: 'landscape',
+            unit: 'px',
+            format: [canvas.width, canvas.height]
+        });
+        pdf.addImage(imgData, 'PNG', 0, 0);
+        pdf.save('report.pdf');
+    };
 
     useEffect(() => {
         if (user) {
@@ -182,7 +198,7 @@ const ManagementPage = () => {
     return (
         <div className='main-page'>
             {regimentData && <RegimentInfoComponent regimentData={regimentData} user={user} onRegimentUpdated={handleRegimentUpdated} canEdit={canEdit()} />}
-            {entities && <EquipmentListComponent entities={entities} user={user} calculateProgress={calculateProgress} onEquipmentUpdated={handleEquipmentUpdated} regimentId={userRegId} canEdit={canEdit()} />}
+            {entities && <EquipmentListComponent entities={entities} user={user} calculateProgress={calculateProgress} onEquipmentUpdated={handleEquipmentUpdated} regimentId={userRegId} regimentName={regimentData.description} canEdit={canEdit()} />}
         </div>
       );
     };

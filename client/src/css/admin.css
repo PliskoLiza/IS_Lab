@@ -1,0 +1,68 @@
+.invite-section {
+    padding: 20px;
+    margin: 20px;
+    background-color: #651174;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.invite-button {
+    background-color: #008CBA;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.invite-button:hover {
+    background-color: #007BAA;
+}
+
+.hash-display {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #39072d;
+    border-radius: 5px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.copy-button {
+    background-color: #ff9800;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.copy-button:hover {
+    background-color: #e68a00;
+}
+
+.user-search-section {
+    padding: 20px;
+    background-color: #031d3b;
+    border-radius: 10px;
+    margin: 20px;
+}
+
+.user-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.user-item span {
+    margin-right: 10px;
+}
+
+.search-results {
+    margin-top: 20px;
+}
+

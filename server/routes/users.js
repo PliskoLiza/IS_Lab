@@ -24,6 +24,27 @@ module.exports = (pool) => {
         });
     });
 
+    router.get('/search', (req, res) => {
+        const { email = '', page = 0 } = req.query;
+        const limit = 10; // Number of results per page
+        const offset = page * limit;
+    
+        const query = `
+            SELECT * FROM users 
+            WHERE email LIKE $1 
+            ORDER BY user_id 
+            LIMIT $2 OFFSET $3
+        `;
+    
+        pool.query(query, [`%${email}%`, limit, offset], (error, result) => {
+            if (error) {
+                res.status(500).json({ error: 'Internal server error' });
+            } else {
+                res.json(result.rows);
+            }
+        });
+    });
+    
     router.get('/whatcando', async (req, res) => {
         const { userId } = req.query;
     

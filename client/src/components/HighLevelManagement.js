@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from "./AuthContext";
 import ProgressBarComponent from './ProgressBar';
 
+import '../css/table.css'
+
 const HighLevelManagement = () => {
     const [entities, setEntities] = useState([]);
     const [regiments, setRegiments] = useState([]);
@@ -76,7 +78,7 @@ const HighLevelManagement = () => {
     const equipmentWithStatus = aggregateEquipmentData();
 
     return (
-        <div>
+        <div className="table-container">
             <h1>High-Level Regiment Management</h1>
             <h2>Regiments</h2>
             <table>

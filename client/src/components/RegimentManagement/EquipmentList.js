@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import ProgressBarComponent from '../ProgressBar';
 import '../../css/regimentequipment.css'
 
-const EquipmentListComponent = ({ entities, user, calculateProgress, onEquipmentUpdated, regimentId, canEdit }) => {
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+
+const EquipmentListComponent = ({ entities, user, calculateProgress, onEquipmentUpdated, regimentId, regimentName, canEdit }) => {
     const [error, setError] = useState('');
     const [dirtyFlags, setDirtyFlags] = useState({});
     const [isLoading, setIsLoading] = useState(false);
@@ -69,6 +72,58 @@ const EquipmentListComponent = ({ entities, user, calculateProgress, onEquipment
         }
     };
 
+    const exportPDF = () => {
+        const pdf = new jsPDF();
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const margin = 10;
+        let y = 20; // Initial vertical offset
+    
+        // Add a title
+        pdf.setFontSize(16);
+        pdf.text('Regiment Equipment Report', margin, y);
+        y += 10; // Increment y offset
+    
+        pdf.setFontSize(14);
+        pdf.text(`Regiment: ${regimentName}`, margin, y);
+        y += 10;
+
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleDateString('en-US', {
+            year: 'numeric', month: 'long', day: 'numeric',
+            hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });
+
+        pdf.text(`Date: ${formattedDate}`, margin, y);
+        y += 20; // Increment y offset
+    
+        // Table Headers
+        pdf.setFontSize(12);
+        pdf.text('Equipment Name', margin, y);
+        pdf.text('Current Count', pageWidth / 2, y);
+        pdf.text('Required Count', pageWidth - 60, y);
+        y += 10; // Increment y offset
+    
+        // Table Rows
+        pdf.setFontSize(10);
+        Object.entries(entities).forEach(([entId, name]) => {
+            const { current, required } = equipmentCounts[entId] || { current: 0, required: 0 };
+    
+            pdf.text(name, margin, y);
+            pdf.text(String(current), pageWidth / 2, y);
+            pdf.text(String(required), pageWidth - 60, y);
+            y += 10; // Increment y offset for next row
+    
+            // Check for page end and add a new page if needed
+            if (y > pdf.internal.pageSize.getHeight() - 20) {
+                pdf.addPage();
+                y = 20; // Reset y offset for the new page
+            }
+        });
+    
+        // Save the PDF
+        pdf.save('equipment-report.pdf');
+    };
+    
     return (
         <div className="equipment-list-container">
             <h3>Regiment Equipment</h3>
@@ -114,6 +169,7 @@ const EquipmentListComponent = ({ entities, user, calculateProgress, onEquipment
                     {isLoading ? 'Updating...' : 'Confirm'}
                 </button>
             }
+            <button onClick={exportPDF}>Export as PDF</button>
         </div>
     );
 };

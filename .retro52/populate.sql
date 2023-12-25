@@ -54,7 +54,7 @@ INSERT INTO permission_to_actions (perm_id, action_id) SELECT
 -- Linking permissions to actions for Regiment Management
 INSERT INTO permission_to_actions (perm_id, action_id) SELECT 
     (SELECT perm_id FROM permissions WHERE description = 'Regiment Management'), 
-    action_id FROM actions WHERE name IN ('Read Own Users', 'Write Own Users', 'Read Own Regiments', 'Write Own Regiments', 'Read All Entity', 'Write All Entity');
+    action_id FROM actions WHERE name IN ('Read Own Users', 'Write Own Users', 'Read Own Regiments', 'Write Own Regiments', 'Read All Entity', 'Write All Entity', 'Read All Tokens', 'Write All Tokens');
 
 -- Linking permissions to actions for Full Administrative Access
 INSERT INTO permission_to_actions (perm_id, action_id) SELECT 

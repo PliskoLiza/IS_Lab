@@ -27,13 +27,13 @@ module.exports = (pool) => {
     router.post('/create', checkPermission(pool, 'Write All Tokens'), (req, res) => {
         const { hash } = req.body;
         pool.query(
-            'INSERT INTO tokens (token_hash, is_valid) VALUES ($1, TRUE) RETURNING token_id',
+            'INSERT INTO tokens (token_hash, is_valid) VALUES ($1, TRUE) RETURNING token_hash',
             [hash],
             (error, result) => {
                 if (error) {
                     res.status(500).json({ error: 'Internal server error' });
                 } else {
-                    res.json({ entId: result.rows[0].ent_id });
+                    res.json({ hash: result.rows[0].token_hash });
                 }
             }
         );
