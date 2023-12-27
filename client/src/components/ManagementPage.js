@@ -165,7 +165,7 @@ const ManagementPage = () => {
     }
 
     const canSee = () => {
-        return (userPermissions.includes("Read Own Regiments") || userPermissions.includes("Read All Entity")) && userRegId;
+        return (userPermissions.includes("Read Own Regiments") && userPermissions.includes("Read All Entity") && userPermissions.includes("Read All Regiments")) && userRegId;
     };
 
     if (!user) {
@@ -198,7 +198,7 @@ const ManagementPage = () => {
     return (
         <div className='main-page'>
             {regimentData && <RegimentInfoComponent regimentData={regimentData} user={user} onRegimentUpdated={handleRegimentUpdated} canEdit={canEdit()} />}
-            {entities && <EquipmentListComponent entities={entities} user={user} calculateProgress={calculateProgress} onEquipmentUpdated={handleEquipmentUpdated} regimentId={userRegId} regimentName={regimentData.description} canEdit={canEdit()} />}
+            {entities && regimentData && <EquipmentListComponent entities={entities} user={user} calculateProgress={calculateProgress} onEquipmentUpdated={handleEquipmentUpdated} regimentId={userRegId} regimentName={regimentData.description} canEdit={canEdit()} />}
         </div>
       );
     };

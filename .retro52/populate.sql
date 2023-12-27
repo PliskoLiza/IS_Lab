@@ -115,8 +115,7 @@ INSERT INTO entity (description) VALUES
 ('12.7x99 Machine gun'),
 ('82mm Mortar'),
 ('120mm Mortar'),
-('155mm Artilery'),
-('Socks');
+('155mm Artilery');
 
 -- Populate user_to_regiment
 INSERT INTO user_to_regiment (reg_id, user_id) VALUES

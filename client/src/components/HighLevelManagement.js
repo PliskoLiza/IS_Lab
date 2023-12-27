@@ -9,6 +9,7 @@ const HighLevelManagement = () => {
     const [regiments, setRegiments] = useState([]);
     const [regimentsEntCur, setRegimentsEntCur] = useState([]);
     const [regimentsEntReq, setRegimentsEntReq] = useState([]);
+    const [userPermissions, setUserPermissions] = useState([]);
     const { user } = useContext(AuthContext);
 
     useEffect(() => {
@@ -16,7 +17,27 @@ const HighLevelManagement = () => {
         fetchEntities();
         fetchRegimentsCurrent();
         fetchRegimentsRerquired();
+
+        if (user) {
+            fetchUserPermissions(user.userId).then(permissions => setUserPermissions(permissions));
+        }
     }, []);
+
+    const fetchUserPermissions = async (userId) => {
+        try {
+            const response = await fetch(`/api/users/whatcando?userId=${userId}`);
+            if (response.ok) {
+                const permissions = await response.json();
+                return permissions.map(permission => permission.name);
+            } else {
+                console.error('Failed to fetch user permissions');
+                return [];
+            }
+        } catch (error) {
+            console.error('Error fetching user permissions:', error);
+            return [];
+        }
+    };
 
     const fetchRegiments = async () => {
         try {
@@ -59,6 +80,18 @@ const HighLevelManagement = () => {
             console.error('Error fetching entities:', error);
         }
     };
+
+    const canSee = () => {
+        return (userPermissions.includes("Read All Entity") && userPermissions.includes("Read All Regiments"));
+    };
+
+    if (!canSee()) {
+        return (
+            <div className='main-page'>
+                <h1> You don`t have the necessary permissions </h1>
+            </div>
+        );
+    }
 
     const aggregateEquipmentData = () => {
         const equipmentStatus = entities.map(entity => {

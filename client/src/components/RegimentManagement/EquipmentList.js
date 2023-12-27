@@ -48,13 +48,15 @@ const EquipmentListComponent = ({ entities, user, calculateProgress, onEquipment
         try {
             for (const [entId, counts] of Object.entries(equipmentCounts)) {
                 let changes = [];
+                const { current, required } = calculateProgress(parseInt(entId));
+
                 if (dirtyFlags[entId]?.current) {
                     await updateCount('current', entId, counts.current || 0);
-                    changes.push(`Current count for ${entities[entId]}: ${counts.current}`);
+                    changes.push(`Current count for ${entities[entId]}: ${counts.current} (old: ${current})`);
                 }
                 if (dirtyFlags[entId]?.required) {
                     await updateCount('required', entId, counts.required || 0);
-                    changes.push(`Required count for ${entities[entId]}: ${counts.required}`);
+                    changes.push(`Required count for ${entities[entId]}: ${counts.required} (old: ${required})`);
                 }
                 if (changes.length > 0) {
                     summary += changes.join('\n') + '\n';
